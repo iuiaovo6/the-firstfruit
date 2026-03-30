@@ -259,9 +259,9 @@ html, body { height: 100%; background: #ddd; font-family: 'Noto Sans SC', sans-s
       <div class="filter-scroll" style="padding-top:6px;">
         <button class="fchip city-chip on" data-city="" onclick="window.selectCity(this)">🌏 全部地区</button>
         <button class="fchip city-chip" data-city="首尔" onclick="window.selectCity(this)">🇰🇷 首尔</button>
-        <button class="fchip city-chip" data-city="釜山" onclick="window.selectCity(this)">🇰🇷 釜山</button>
-        <button class="fchip city-chip" data-city="济州岛" onclick="window.selectCity(this)">🇰🇷 济州岛</button>
-        <button class="fchip city-chip" data-city="东京" onclick="window.selectCity(this)">🇯🇵 东京</button>
+        <button class="fchip city-chip" data-city="釜山" onclick="window.selectCity(this)">🇰🇷 东京</button>
+        <button class="fchip city-chip" data-city="济州岛" onclick="window.selectCity(this)">🇰🇷 名古屋</button>
+        <button class="fchip city-chip" data-city="东京" onclick="window.selectCity(this)">🇯🇵 釜山</button>
         <button class="fchip city-chip" data-city="大阪" onclick="window.selectCity(this)">🇯🇵 大阪</button>
         <button class="fchip city-chip" data-city="曼谷" onclick="window.selectCity(this)">🇹🇭 曼谷</button>
         <button class="fchip city-chip" data-city="新加坡" onclick="window.selectCity(this)">🇸🇬 新加坡</button>
@@ -282,7 +282,7 @@ html, body { height: 100%; background: #ddd; font-family: 'Noto Sans SC', sans-s
             <div class="fd-field">
               <label>性别要求</label>
               <select id="f-gender" onchange="window.filterCards()">
-                <option value="">不限</option><option>仅女生</option><option>男女均可</option>
+                <option value="">不限</option><option>仅女生</option><option>仅男生</option>
               </select>
             </div>
             <div class="fd-field">
@@ -322,7 +322,7 @@ html, body { height: 100%; background: #ddd; font-family: 'Noto Sans SC', sans-s
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">地区 <span class="req">*</span></label>
-            <input class="fi" id="pub-city" type="text" placeholder="如：首尔、曼谷、台北…">
+            <input class="fi" id="pub-city" type="text" placeholder="如：首尔、曼谷、香港…">
           </div>
           <div class="form-group">
             <label class="form-label">日期</label>
@@ -337,11 +337,12 @@ html, body { height: 100%; background: #ddd; font-family: 'Noto Sans SC', sans-s
           <label class="form-label">活动类型</label>
           <div class="ms-wrap" id="pub-type-chips">
             <span class="ms-chip" onclick="window.toggleChip(this)">🎤 演唱会</span>
-            <span class="ms-chip" onclick="window.toggleChip(this)">🤝 见面会</span>
-            <span class="ms-chip" onclick="window.toggleChip(this)">🎉 粉丝节</span>
+            <span class="ms-chip" onclick="window.toggleChip(this)">🤝 粉丝见面会</span>
+            <span class="ms-chip" onclick="window.toggleChip(this)">🎉 拼盘活动</span>
             <span class="ms-chip" onclick="window.toggleChip(this)">✈️ 机场接机</span>
-            <span class="ms-chip" onclick="window.toggleChip(this)">🛍 周边活动</span>
-            <span class="ms-chip" onclick="window.toggleChip(this)">🎬 影视应援</span>
+            <span class="ms-chip" onclick="window.toggleChip(this)">🛍 应援活动</span>
+            <span class="ms-chip" onclick="window.toggleChip(this)">🎀 签售会</span>
+            <span class="ms-chip" onclick="window.toggleChip(this)">🌟 回归</span>
           </div>
         </div>
         <div class="form-row">
@@ -351,31 +352,31 @@ html, body { height: 100%; background: #ddd; font-family: 'Noto Sans SC', sans-s
           </div>
           <div class="form-group">
             <label class="form-label">性别要求</label>
-            <select class="fs" id="pub-gender"><option>不限</option><option>仅女生</option><option>男女均可</option></select>
+            <select class="fs" id="pub-gender"><option>不限</option><option>仅女生</option><option>仅男生</option></select>
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">预算范围</label>
-          <input class="fi" id="pub-budget" type="text" placeholder="如：¥500–800 或 免费">
+          <input class="fi" id="pub-budget" type="text" placeholder="如：¥500–5000 或 免费">
         </div>
         <div class="form-group">
           <label class="form-label">本命 <span class="req">*</span></label>
-          <input class="fi" id="pub-idol" type="text" placeholder="如：IVE 안유진（多个用逗号分隔）">
+          <input class="fi" id="pub-idol" type="text" placeholder="如：NCT MARK（多个用逗号分隔）">
         </div>
         <div class="form-group">
           <label class="form-label">粉籍风格</label>
-          <input class="fi" id="pub-style" type="text" placeholder="如：理性粉、氛围向…">
+          <input class="fi" id="pub-style" type="text" placeholder="如：CP粉、团粉…">
         </div>
         <div class="form-group">
           <label class="form-label">行程标签</label>
           <div class="ms-wrap" id="pub-trip-tags">
-            <span class="ms-chip" onclick="window.toggleChip(this)">有票</span>
-            <span class="ms-chip" onclick="window.toggleChip(this)">找票</span>
-            <span class="ms-chip" onclick="window.toggleChip(this)">拼住宿</span>
-            <span class="ms-chip" onclick="window.toggleChip(this)">拼车/打车</span>
-            <span class="ms-chip" onclick="window.toggleChip(this)">外地来</span>
-            <span class="ms-chip" onclick="window.toggleChip(this)">本地带路</span>
-            <span class="ms-chip" onclick="window.toggleChip(this)">可接机场</span>
+            <span class="ms-chip" onclick="window.toggleChip(this)">逛街</span>
+            <span class="ms-chip" onclick="window.toggleChip(this)">吃饭</span>
+            <span class="ms-chip" onclick="window.toggleChip(this)">拼房</span>
+            <span class="ms-chip" onclick="window.toggleChip(this)">拼车</span>
+            <span class="ms-chip" onclick="window.toggleChip(this)">拍照</span>
+            <span class="ms-chip" onclick="window.toggleChip(this)">接机</span>
+            <span class="ms-chip" onclick="window.toggleChip(this)">接上下班</span>
           </div>
         </div>
         <div class="form-group">
