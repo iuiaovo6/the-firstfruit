@@ -191,6 +191,31 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
 /* toast */
 .toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--black);color:var(--white);padding:11px 22px;border-radius:999px;font-size:13px;font-family:'Noto Sans SC',sans-serif;font-weight:300;opacity:0;pointer-events:none;transition:all .28s ease;z-index:999;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* post detail modal */
+.post-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease;}
+.post-modal-overlay.open{opacity:1;pointer-events:all;}
+.post-modal-sheet{width:100%;max-width:430px;background:var(--white);border-radius:22px 22px 0 0;transform:translateY(60px);transition:transform .3s ease;max-height:88dvh;display:flex;flex-direction:column;overflow:hidden;}
+.post-modal-overlay.open .post-modal-sheet{transform:translateY(0);}
+.post-modal-handle{width:36px;height:4px;background:var(--gray-3);border-radius:2px;margin:14px auto 0;flex-shrink:0;}
+.post-modal-scroll{flex:1;overflow-y:auto;scrollbar-width:none;padding:18px 22px 0;}
+.post-modal-scroll::-webkit-scrollbar{display:none;}
+.post-modal-event{font-size:20px;font-weight:500;letter-spacing:-.4px;line-height:1.3;margin-bottom:6px;}
+.post-modal-meta{font-size:13px;color:var(--gray-5);font-weight:300;margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;}
+.post-modal-divider{height:1px;background:var(--gray-1);margin:16px 0;}
+.post-modal-section-label{font-size:11px;color:var(--gray-5);letter-spacing:.5px;text-transform:uppercase;font-weight:400;margin-bottom:8px;}
+.post-modal-author{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.post-modal-av{width:44px;height:44px;border-radius:50%;background:var(--gray-1);border:1.5px solid var(--gray-3);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0;}
+.post-modal-av img{width:100%;height:100%;object-fit:cover;}
+.post-modal-author-name{font-size:15px;font-weight:500;margin-bottom:2px;}
+.post-modal-author-sub{font-size:12.5px;color:var(--gray-5);font-weight:300;}
+.post-modal-body-text{font-size:14px;color:var(--gray-7);line-height:1.75;font-weight:300;white-space:pre-wrap;word-break:break-word;}
+.post-modal-footer{padding:14px 22px 28px;display:flex;gap:10px;border-top:1px solid var(--gray-1);flex-shrink:0;background:var(--white);}
+.post-modal-close-btn{flex:1;padding:13px;border:1.5px solid var(--gray-3);border-radius:var(--radius);font-size:14px;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--gray-7);background:none;cursor:pointer;transition:all .2s;}
+.post-modal-close-btn:hover{border-color:var(--black);color:var(--black);}
+.post-modal-msg-btn{flex:2;padding:13px;border:none;border-radius:var(--radius);font-size:14px;font-family:'Noto Sans SC',sans-serif;font-weight:400;color:var(--white);background:var(--black);cursor:pointer;transition:opacity .2s;}
+.post-modal-msg-btn:hover{opacity:.78;}
+/* card expand hint */
+.card-expand-hint{font-size:11.5px;color:var(--gray-5);font-weight:300;padding-top:8px;text-align:right;}
 </style>
 </head>
 <body>
@@ -437,6 +462,15 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
       <div class="form-group" style="margin:0"><label class="form-label">个人简介</label><textarea class="ft" id="editBio" placeholder="介绍一下自己～" rows="3" style="min-height:80px"></textarea></div>
       <button class="submit-btn" id="saveProfileBtn" onclick="window.saveProfile()">保存资料</button>
     </div>
+  </div>
+</div>
+
+<!-- 帖子详情弹窗 -->
+<div class="post-modal-overlay" id="postModal" onclick="window.closePostModal(event)">
+  <div class="post-modal-sheet">
+    <div class="post-modal-handle"></div>
+    <div class="post-modal-scroll" id="postModalContent"></div>
+    <div class="post-modal-footer" id="postModalFooter"></div>
   </div>
 </div>
 
@@ -802,7 +836,9 @@ function renderCards(posts){
   const list=document.getElementById('cardList');
   document.getElementById('resultCount').textContent=`共 ${posts.length} 条行程`;
   if(!posts.length){list.innerHTML='<div style="padding:40px 0;text-align:center;color:var(--gray-5);font-size:13px;font-weight:300;">暂无符合条件的行程～</div>';return;}
-  list.innerHTML=posts.map(p=>{
+  // store posts for modal lookup
+  window._postsCache = posts;
+  list.innerHTML=posts.map((p,idx)=>{
     const ds=p.date?p.date.replace(/-/g,'.'):'';
     const tags=Array.isArray(p.tags)?p.tags:[];
     const av=p.avatar_url||'🌸';
@@ -812,10 +848,10 @@ function renderCards(posts){
     const safeN=(p.author_name||'搭子').replace(/'/g,"\\'").replace(/"/g,'&quot;');
     const safeAv=av.replace(/'/g,"\\'");
     const msgBtn=canMsg
-      ?`<button class="dm-btn" onclick="window.startChat('${p.author_uid}','${safeN}','${safeAv}','${p.id}')">消息</button>`
+      ?`<button class="dm-btn" onclick="event.stopPropagation();window.startChat('${p.author_uid}','${safeN}','${safeAv}','${p.id}')">消息</button>`
       :isMine?'<span style="font-size:12px;color:var(--gray-5)">我发布的</span>'
               :'<span style="font-size:12px;color:var(--gray-5)">不接受消息</span>';
-    return`<div class="card">
+    return`<div class="card" onclick="window.openPostModal(${idx})">
       <div class="card-top"><span class="card-location">📍 ${p.city||''}</span><span class="card-date">${ds}</span></div>
       <div class="card-event">${p.event||''}</div>
       ${p.idol?`<div class="card-idol">본명 · ${p.idol}</div>`:''}
@@ -828,6 +864,7 @@ function renderCards(posts){
       ${p.about?`<div class="person-block"><div class="person-block-header"><div class="avatar-sm">${avH}</div><span class="person-name">${p.author_name||'匿名搭子'}</span><span class="person-city">${p.style||''}</span></div><div class="person-desc">${p.about}</div></div>`:''}
       ${tags.length?`<div class="tag-row">${tags.map(t=>`<span class="tag tag-outline">${t}</span>`).join('')}</div>`:''}
       <div class="card-footer"><div class="card-stats"><div class="card-stat">👥 ${p.num||'–'}</div><div class="card-stat">${ds}</div></div>${msgBtn}</div>
+      <div class="card-expand-hint">查看详情 ›</div>
     </div>`;
   }).join('');
 }
@@ -891,6 +928,76 @@ sb.auth.onAuthStateChange(async(_,session)=>{
   if(currentUser&&document.getElementById('page-my').classList.contains('active')){await loadProfile();renderMyPosts();}
   if(currentUser&&document.getElementById('page-dm').classList.contains('active'))renderConvList();
 });
+
+// ── 帖子详情弹窗 ──
+window.openPostModal = function(idx) {
+  const p = window._postsCache?.[idx];
+  if (!p) return;
+
+  const ds   = p.date ? p.date.replace(/-/g, '.') : '';
+  const av   = p.avatar_url || '🌸';
+  const avH  = (av.startsWith('http') || av.startsWith('/')) ? `<img src="${av}" alt="av">` : av;
+  const tags = Array.isArray(p.tags) ? p.tags : [];
+  const isMine  = currentUser && p.author_uid === currentUser.id;
+  const canMsg  = p.allow_message !== false && p.author_uid && !isMine;
+  const safeN   = (p.author_name || '搭子').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  const safeAv  = av.replace(/'/g, "\\'");
+
+  document.getElementById('postModalContent').innerHTML = `
+    <div class="post-modal-event">${p.event || ''}</div>
+    <div class="post-modal-meta">
+      ${p.city ? `<span>📍 ${p.city}</span>` : ''}
+      ${ds     ? `<span>🗓 ${ds}</span>`     : ''}
+      ${p.type ? `<span>🎤 ${p.type}</span>` : ''}
+    </div>
+    <div class="tag-row" style="margin-bottom:14px">
+      ${p.gender ? `<span class="tag tag-dark">${p.gender}</span>`         : ''}
+      ${p.num    ? `<span class="tag tag-outline">找 ${p.num}</span>`       : ''}
+      ${p.budget ? `<span class="tag tag-outline">${p.budget}</span>`       : ''}
+      ${tags.map(t => `<span class="tag tag-outline">${t}</span>`).join('')}
+    </div>
+
+    ${p.idol ? `<div class="post-modal-divider"></div>
+    <div class="post-modal-section-label">本命</div>
+    <div style="font-size:14px;color:var(--gray-7);font-weight:300;margin-bottom:4px">${p.idol}</div>` : ''}
+
+    <div class="post-modal-divider"></div>
+    <div class="post-modal-section-label">发起人</div>
+    <div class="post-modal-author">
+      <div class="post-modal-av">${avH}</div>
+      <div>
+        <div class="post-modal-author-name">${p.author_name || '匿名搭子'}</div>
+        ${p.style ? `<div class="post-modal-author-sub">${p.style}</div>` : ''}
+      </div>
+    </div>
+
+    ${p.about ? `<div class="post-modal-section-label">关于我</div>
+    <div class="post-modal-body-text" style="margin-bottom:16px">${esc(p.about)}</div>` : ''}
+
+    ${p.description ? `<div class="post-modal-divider"></div>
+    <div class="post-modal-section-label">活动补充描述</div>
+    <div class="post-modal-body-text" style="margin-bottom:16px">${esc(p.description)}</div>` : ''}
+    <div style="height:4px"></div>
+  `;
+
+  document.getElementById('postModalFooter').innerHTML = `
+    <button class="post-modal-close-btn" onclick="window.closePostModal()">关闭</button>
+    ${canMsg
+      ? `<button class="post-modal-msg-btn" onclick="window.closePostModal();window.startChat('${p.author_uid}','${safeN}','${safeAv}','${p.id}')">💬 发消息</button>`
+      : isMine
+        ? `<button class="post-modal-msg-btn" style="opacity:.45;cursor:default" disabled>我发布的</button>`
+        : `<button class="post-modal-msg-btn" style="opacity:.45;cursor:default" disabled>不接受消息</button>`
+    }
+  `;
+
+  document.getElementById('postModal').classList.add('open');
+};
+
+window.closePostModal = function(e) {
+  if (!e || e.target === document.getElementById('postModal')) {
+    document.getElementById('postModal').classList.remove('open');
+  }
+};
 
 // ── init ──
 (async()=>{
