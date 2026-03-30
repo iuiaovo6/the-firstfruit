@@ -7,227 +7,190 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --black: #0a0a0a; --gray-7: #444; --gray-5: #888;
-  --gray-3: #ccc; --gray-1: #f4f4f4; --white: #fafafa;
-  --radius: 16px; --radius-sm: 10px;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; background: #ddd; font-family: 'Noto Sans SC', sans-serif; font-weight: 300; -webkit-font-smoothing: antialiased; }
-#app { max-width: 430px; margin: 0 auto; height: 100dvh; min-height: 100vh; display: flex; flex-direction: column; background: var(--white); overflow: hidden; box-shadow: 0 0 60px rgba(0,0,0,.15); }
-
-/* TOP BAR */
-.topbar { padding: 18px 22px 10px; display: flex; align-items: center; justify-content: space-between; background: var(--white); border-bottom: 1px solid var(--gray-1); flex-shrink: 0; z-index: 10; }
-.logo { font-family: 'DM Sans', sans-serif; font-size: 19px; font-weight: 500; letter-spacing: -.5px; color: var(--black); }
-.logo span { color: var(--gray-5); font-weight: 300; font-size: 15px; }
-.icon-btn { width: 34px; height: 34px; border: 1.5px solid var(--gray-3); border-radius: 50%; display: flex; align-items: center; justify-content: center; background: none; cursor: pointer; font-size: 15px; transition: border-color .2s; }
-.icon-btn:hover { border-color: var(--black); }
-
-/* PAGES */
-.pages { flex: 1; overflow: hidden; position: relative; }
-.page { position: absolute; inset: 0; overflow-y: auto; padding-bottom: 90px; opacity: 0; pointer-events: none; transition: opacity .22s ease; scrollbar-width: none; }
-.page::-webkit-scrollbar { display: none; }
-.page.active { opacity: 1; pointer-events: all; }
-
-/* BOTTOM NAV */
-.bottom-nav { display: flex; flex-shrink: 0; background: rgba(250,250,250,.96); backdrop-filter: blur(20px); border-top: 1px solid var(--gray-3); z-index: 20; }
-.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 11px 0 14px; cursor: pointer; border: none; background: none; color: var(--gray-5); font-size: 10.5px; font-family: 'Noto Sans SC', sans-serif; font-weight: 300; letter-spacing: .3px; transition: color .2s; position: relative; }
-.nav-item .ni { font-size: 20px; line-height: 1; }
-.nav-item.active { color: var(--black); font-weight: 500; }
-.nav-item.active::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 22px; height: 2.5px; background: var(--black); border-radius: 0 0 3px 3px; }
-/* unread badge */
-.nav-badge { position: absolute; top: 8px; right: 18px; width: 7px; height: 7px; background: #e55; border-radius: 50%; display: none; }
-.nav-badge.show { display: block; }
-
-/* DISCOVER */
-.search-wrap { padding: 14px 22px 0; }
-.search-box { display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--gray-3); border-radius: 999px; padding: 10px 16px; transition: border-color .2s; }
-.search-box:focus-within { border-color: var(--black); }
-.search-box input { flex: 1; border: none; outline: none; background: none; font-size: 13.5px; font-family: 'Noto Sans SC', sans-serif; font-weight: 300; color: var(--black); }
-.search-box input::placeholder { color: var(--gray-5); }
-.s-icon { font-size: 15px; color: var(--gray-5); }
-.filter-scroll { padding: 12px 22px 0; display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; }
-.filter-scroll::-webkit-scrollbar { display: none; }
-.fchip { flex-shrink: 0; border: 1.5px solid var(--gray-3); border-radius: 999px; padding: 6px 13px; font-size: 12px; font-family: 'Noto Sans SC', sans-serif; font-weight: 300; color: var(--gray-5); cursor: pointer; background: none; transition: all .15s; white-space: nowrap; }
-.fchip.on, .fchip:hover { background: var(--black); border-color: var(--black); color: var(--white); }
-.filter-drawer { margin: 0 22px; overflow: hidden; max-height: 0; transition: max-height .35s ease; }
-.filter-drawer.open { max-height: 280px; }
-.fd-inner { border: 1.5px solid var(--gray-3); border-radius: var(--radius); padding: 16px; margin-top: 12px; display: flex; flex-direction: column; gap: 12px; }
-.fd-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.fd-field label { display: block; font-size: 11px; color: var(--gray-5); margin-bottom: 5px; }
-.fd-field select, .fd-field input { width: 100%; border: 1.5px solid var(--gray-3); border-radius: var(--radius-sm); padding: 8px 11px; font-size: 13px; font-family: 'Noto Sans SC', sans-serif; font-weight: 300; color: var(--black); background: var(--white); appearance: none; outline: none; transition: border-color .2s; }
-.fd-field select:focus, .fd-field input:focus { border-color: var(--black); }
-.result-count { padding: 14px 22px 8px; font-size: 12px; color: var(--gray-5); }
-
-/* CARDS */
-.card-list { padding: 0 22px; display: flex; flex-direction: column; gap: 14px; }
-.card { border: 1.5px solid var(--gray-3); border-radius: var(--radius); padding: 18px; transition: border-color .2s, box-shadow .2s; background: var(--white); }
-.card:hover { border-color: var(--gray-7); box-shadow: 0 4px 20px rgba(0,0,0,.06); }
-.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-.card-location { font-size: 11.5px; color: var(--gray-5); }
-.card-date { font-size: 11.5px; color: var(--gray-5); }
-.card-event { font-size: 17px; font-weight: 500; letter-spacing: -.3px; line-height: 1.3; margin-bottom: 6px; }
-.card-idol { font-size: 13px; color: var(--gray-5); margin-bottom: 11px; font-weight: 300; }
-.tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 11px; }
-.tag { font-size: 11.5px; padding: 4px 10px; border-radius: 999px; font-weight: 300; }
-.tag-dark { background: var(--black); color: var(--white); }
-.tag-light { background: var(--gray-1); color: var(--gray-7); }
-.tag-outline { border: 1.5px solid var(--gray-3); color: var(--gray-5); }
-.person-block { background: var(--gray-1); border-radius: var(--radius-sm); padding: 11px 13px; margin-bottom: 11px; }
-.person-block-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: var(--gray-3); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; overflow: hidden; }
-.avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
-.person-name { font-size: 12.5px; font-weight: 500; color: var(--black); }
-.person-city { font-size: 11.5px; color: var(--gray-5); font-weight: 300; margin-left: auto; }
-.person-desc { font-size: 12.5px; color: var(--gray-7); line-height: 1.65; font-weight: 300; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.card-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--gray-1); padding-top: 11px; margin-top: 4px; }
-.card-stats { display: flex; gap: 14px; }
-.card-stat { font-size: 12px; color: var(--gray-5); }
-.dm-btn { font-size: 12px; padding: 7px 15px; border: 1.5px solid var(--gray-3); border-radius: 999px; background: none; cursor: pointer; font-family: 'Noto Sans SC', sans-serif; font-weight: 400; color: var(--black); transition: all .2s; }
-.dm-btn:hover { background: var(--black); color: var(--white); border-color: var(--black); }
-
-/* PUBLISH */
-.pub-inner { padding: 10px 22px 0; }
-.page-title { font-size: 23px; font-weight: 500; letter-spacing: -.5px; margin-bottom: 4px; }
-.page-sub { font-size: 13px; color: var(--gray-5); font-weight: 300; margin-bottom: 24px; line-height: 1.6; }
-.form-group { margin-bottom: 18px; }
-.form-label { display: block; font-size: 11.5px; color: var(--gray-5); margin-bottom: 6px; letter-spacing: .3px; }
-.form-label .req { color: var(--black); }
-.fi, .fs, .ft { width: 100%; border: 1.5px solid var(--gray-3); border-radius: var(--radius-sm); padding: 11px 13px; font-size: 13.5px; font-family: 'Noto Sans SC', sans-serif; font-weight: 300; color: var(--black); background: var(--white); appearance: none; outline: none; transition: border-color .2s; }
-.fi::placeholder, .ft::placeholder { color: var(--gray-5); }
-.fi:focus, .fs:focus, .ft:focus { border-color: var(--black); }
-.ft { resize: none; min-height: 110px; line-height: 1.7; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
-.ms-wrap { display: flex; flex-wrap: wrap; gap: 7px; }
-.ms-chip { padding: 7px 13px; border: 1.5px solid var(--gray-3); border-radius: 999px; font-size: 12.5px; font-family: 'Noto Sans SC', sans-serif; font-weight: 300; color: var(--gray-5); cursor: pointer; transition: all .15s; user-select: none; }
-.ms-chip.sel { background: var(--black); border-color: var(--black); color: var(--white); }
-.cb-row { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--gray-7); font-weight: 300; cursor: pointer; }
-.cb-row input[type=checkbox] { width: 17px; height: 17px; accent-color: var(--black); cursor: pointer; }
-.submit-btn { width: 100%; padding: 14px; background: var(--black); color: var(--white); border: none; border-radius: var(--radius); font-size: 15px; font-family: 'Noto Sans SC', sans-serif; font-weight: 400; letter-spacing: .5px; cursor: pointer; margin-top: 8px; transition: opacity .2s; }
-.submit-btn:hover { opacity: .78; }
-.submit-btn:disabled { opacity: .4; cursor: not-allowed; }
-.login-gate { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60vh; gap: 14px; text-align: center; padding: 0 36px; }
-.login-gate .big { font-size: 44px; opacity: .18; }
-.login-gate h3 { font-size: 17px; font-weight: 400; color: var(--gray-7); }
-.login-gate p { font-size: 13px; color: var(--gray-5); line-height: 1.7; font-weight: 300; }
-.go-btn { margin-top: 4px; padding: 11px 28px; background: var(--black); color: var(--white); border: none; border-radius: 999px; font-size: 13.5px; font-family: 'Noto Sans SC', sans-serif; font-weight: 400; cursor: pointer; transition: opacity .2s; }
-.go-btn:hover { opacity: .75; }
-
-/* ══ 消息页 ══ */
-/* 会话列表 */
-.conv-list { display: flex; flex-direction: column; }
-.conv-item { display: flex; align-items: center; gap: 13px; padding: 14px 22px; border-bottom: 1px solid var(--gray-1); cursor: pointer; transition: background .15s; }
-.conv-item:hover { background: var(--gray-1); }
-.conv-av { width: 44px; height: 44px; border-radius: 50%; background: var(--gray-1); border: 1.5px solid var(--gray-3); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; overflow: hidden; }
-.conv-av img { width: 100%; height: 100%; object-fit: cover; }
-.conv-info { flex: 1; min-width: 0; }
-.conv-name { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
-.conv-preview { font-size: 12.5px; color: var(--gray-5); font-weight: 300; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.conv-time { font-size: 11px; color: var(--gray-5); flex-shrink: 0; }
-.conv-unread { width: 8px; height: 8px; border-radius: 50%; background: var(--black); flex-shrink: 0; }
-
-/* 消息页顶部 */
-.msg-topbar { padding: 16px 22px 12px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--gray-1); flex-shrink: 0; }
-.msg-back { font-size: 20px; cursor: pointer; color: var(--gray-7); background: none; border: none; padding: 0; line-height: 1; }
-.msg-peer-av { width: 34px; height: 34px; border-radius: 50%; background: var(--gray-1); border: 1.5px solid var(--gray-3); display: flex; align-items: center; justify-content: center; font-size: 18px; overflow: hidden; flex-shrink: 0; }
-.msg-peer-av img { width: 100%; height: 100%; object-fit: cover; }
-.msg-peer-name { font-size: 15px; font-weight: 500; letter-spacing: -.2px; }
-.msg-peer-sub { font-size: 11.5px; color: var(--gray-5); font-weight: 300; }
-
-/* 消息气泡区 */
-.msg-bubbles { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: none; }
-.msg-bubbles::-webkit-scrollbar { display: none; }
-.bubble-wrap { display: flex; align-items: flex-end; gap: 7px; }
-.bubble-wrap.mine { flex-direction: row-reverse; }
-.bubble-av { width: 26px; height: 26px; border-radius: 50%; background: var(--gray-1); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; overflow: hidden; }
-.bubble-av img { width: 100%; height: 100%; object-fit: cover; }
-.bubble { max-width: 72%; padding: 10px 14px; border-radius: 18px; font-size: 13.5px; line-height: 1.55; font-weight: 300; word-break: break-word; }
-.bubble.theirs { background: var(--gray-1); color: var(--black); border-bottom-left-radius: 4px; }
-.bubble.mine { background: var(--black); color: var(--white); border-bottom-right-radius: 4px; }
-.bubble-time { font-size: 10.5px; color: var(--gray-5); padding: 0 4px; flex-shrink: 0; }
-.bubble-date-sep { text-align: center; font-size: 11px; color: var(--gray-5); padding: 6px 0; }
-
-/* 消息输入栏 */
-.msg-input-bar { display: flex; align-items: center; gap: 10px; padding: 10px 16px 14px; border-top: 1px solid var(--gray-1); background: var(--white); flex-shrink: 0; }
-.msg-input { flex: 1; border: 1.5px solid var(--gray-3); border-radius: 999px; padding: 10px 16px; font-size: 13.5px; font-family: 'Noto Sans SC', sans-serif; font-weight: 300; color: var(--black); background: var(--white); outline: none; transition: border-color .2s; resize: none; max-height: 100px; overflow-y: auto; }
-.msg-input:focus { border-color: var(--black); }
-.msg-send { width: 38px; height: 38px; border-radius: 50%; background: var(--black); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: opacity .2s; }
-.msg-send:hover { opacity: .75; }
-.msg-send svg { width: 16px; height: 16px; fill: var(--white); }
-
-/* 消息页两态 */
-.msg-list-view { display: flex; flex-direction: column; height: 100%; }
-.msg-chat-view { display: none; flex-direction: column; position: absolute; inset: 0; background: var(--white); z-index: 5; }
-.msg-chat-view.open { display: flex; }
-.msg-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 55vh; gap: 12px; color: var(--gray-5); text-align: center; padding: 0 40px; }
-.msg-empty .big { font-size: 46px; opacity: .18; }
-.msg-empty p { font-size: 13px; line-height: 1.7; font-weight: 300; }
-
-/* MY PAGE */
-.profile-sec { padding: 20px 22px 24px; border-bottom: 1px solid var(--gray-1); }
-.profile-avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--gray-1); border: 1.5px solid var(--gray-3); display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 14px; overflow: hidden; cursor: pointer; position: relative; }
-.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.profile-avatar-overlay { position: absolute; inset: 0; background: rgba(0,0,0,.35); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .2s; }
-.profile-avatar:hover .profile-avatar-overlay { opacity: 1; }
-.profile-avatar-overlay span { font-size: 18px; }
-.profile-name { font-size: 20px; font-weight: 500; letter-spacing: -.3px; margin-bottom: 3px; }
-.profile-idol { font-size: 13px; color: var(--gray-5); font-weight: 300; margin-bottom: 6px; }
-.profile-bio { font-size: 13px; color: var(--gray-7); font-weight: 300; line-height: 1.6; margin-bottom: 14px; }
-.profile-edit-btn { font-size: 12px; padding: 6px 16px; border: 1.5px solid var(--gray-3); border-radius: 999px; background: none; cursor: pointer; font-family: 'Noto Sans SC', sans-serif; font-weight: 300; color: var(--gray-7); transition: all .2s; }
-.profile-edit-btn:hover { border-color: var(--black); color: var(--black); }
-.sec-head { padding: 18px 22px 10px; font-size: 11.5px; font-weight: 500; letter-spacing: .5px; color: var(--gray-5); text-transform: uppercase; }
-.my-posts { padding: 0 22px; display: flex; flex-direction: column; gap: 10px; }
-.my-post { border: 1.5px solid var(--gray-3); border-radius: var(--radius-sm); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.my-post-title { font-size: 14px; font-weight: 400; margin-bottom: 3px; }
-.my-post-meta { font-size: 12px; color: var(--gray-5); font-weight: 300; }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-3); flex-shrink: 0; }
-.dot.on { background: #5cb85c; }
-.setting-item { padding: 14px 22px; border-bottom: 1px solid var(--gray-1); font-size: 14px; color: var(--gray-7); font-weight: 300; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-.setting-item .arr { color: var(--gray-3); }
-
-/* AUTH */
-.auth-section { padding: 24px 22px 0; }
-.auth-tabs { display: flex; margin-bottom: 24px; border-bottom: 1.5px solid var(--gray-1); }
-.auth-tab { flex: 1; text-align: center; padding: 10px 0; font-size: 14px; font-weight: 300; color: var(--gray-5); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -1.5px; transition: all .2s; font-family: 'Noto Sans SC', sans-serif; }
-.auth-tab.active { color: var(--black); font-weight: 500; border-bottom-color: var(--black); }
-.auth-intro { font-size: 13px; color: var(--gray-5); font-weight: 300; line-height: 1.7; margin-bottom: 22px; }
-.auth-btn { width: 100%; padding: 13px; background: var(--black); color: var(--white); border: none; border-radius: var(--radius); font-size: 14.5px; font-family: 'Noto Sans SC', sans-serif; font-weight: 400; letter-spacing: .3px; cursor: pointer; transition: opacity .2s; margin-top: 4px; }
-.auth-btn:hover { opacity: .78; }
-.auth-btn:disabled { opacity: .4; cursor: not-allowed; }
-.auth-switch { text-align: center; margin-top: 16px; font-size: 12.5px; color: var(--gray-5); font-weight: 300; }
-.auth-switch span { color: var(--black); cursor: pointer; font-weight: 400; }
-
-/* EDIT MODAL */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 100; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s ease; }
-.modal-overlay.open { opacity: 1; pointer-events: all; }
-.modal-sheet { width: 100%; max-width: 430px; background: var(--white); border-radius: 20px 20px 0 0; padding: 0 0 32px; transform: translateY(40px); transition: transform .28s ease; max-height: 90dvh; overflow-y: auto; scrollbar-width: none; }
-.modal-overlay.open .modal-sheet { transform: translateY(0); }
-.modal-sheet::-webkit-scrollbar { display: none; }
-.modal-handle { width: 36px; height: 4px; background: var(--gray-3); border-radius: 2px; margin: 14px auto 20px; }
-.modal-title { font-size: 17px; font-weight: 500; letter-spacing: -.3px; padding: 0 22px; margin-bottom: 20px; }
-.modal-body { padding: 0 22px; display: flex; flex-direction: column; gap: 16px; }
-
-/* AVATAR UPLOAD */
-.avatar-upload-area { display: flex; align-items: center; gap: 16px; }
-.avatar-upload-preview { width: 64px; height: 64px; border-radius: 50%; background: var(--gray-1); border: 1.5px solid var(--gray-3); display: flex; align-items: center; justify-content: center; font-size: 30px; overflow: hidden; flex-shrink: 0; cursor: pointer; position: relative; }
-.avatar-upload-preview img { width: 100%; height: 100%; object-fit: cover; }
-.avatar-upload-preview:hover::after { content: '📷'; position: absolute; inset: 0; background: rgba(0,0,0,.3); display: flex; align-items: center; justify-content: center; font-size: 22px; border-radius: 50%; }
-.avatar-upload-actions { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-.avatar-upload-btn { font-size: 12.5px; padding: 8px 14px; border: 1.5px solid var(--gray-3); border-radius: 999px; background: none; cursor: pointer; font-family: 'Noto Sans SC', sans-serif; font-weight: 300; color: var(--gray-7); transition: all .2s; text-align: center; }
-.avatar-upload-btn:hover { border-color: var(--black); color: var(--black); }
-.avatar-hint { font-size: 11px; color: var(--gray-5); font-weight: 300; }
-.avatar-emoji-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-.avatar-emoji { width: 36px; height: 36px; border-radius: 50%; background: var(--gray-1); border: 1.5px solid transparent; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; transition: border-color .15s; }
-.avatar-emoji.picked { border-color: var(--black); background: var(--gray-1); }
-
-/* upload progress */
-.upload-progress { height: 2px; background: var(--gray-2); border-radius: 1px; overflow: hidden; margin-top: 4px; display: none; }
-.upload-progress-bar { height: 100%; background: var(--black); width: 0; transition: width .3s; }
-.upload-progress.show { display: block; }
-
-/* TOAST */
-.toast { position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--black); color: var(--white); padding: 11px 22px; border-radius: 999px; font-size: 13px; font-family: 'Noto Sans SC', sans-serif; font-weight: 300; opacity: 0; pointer-events: none; transition: all .28s ease; z-index: 999; white-space: nowrap; }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+:root{--black:#0a0a0a;--gray-7:#444;--gray-5:#888;--gray-3:#ccc;--gray-1:#f4f4f4;--white:#fafafa;--radius:16px;--radius-sm:10px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;}
+#app{max-width:430px;margin:0 auto;height:100dvh;min-height:100vh;display:flex;flex-direction:column;background:var(--white);overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.15);}
+.topbar{padding:18px 22px 10px;display:flex;align-items:center;justify-content:space-between;background:var(--white);border-bottom:1px solid var(--gray-1);flex-shrink:0;z-index:10;}
+.logo{font-family:'DM Sans',sans-serif;font-size:19px;font-weight:500;letter-spacing:-.5px;color:var(--black);}
+.logo span{color:var(--gray-5);font-weight:300;font-size:15px;}
+.icon-btn{width:34px;height:34px;border:1.5px solid var(--gray-3);border-radius:50%;display:flex;align-items:center;justify-content:center;background:none;cursor:pointer;font-size:15px;transition:border-color .2s;}
+.icon-btn:hover{border-color:var(--black);}
+.pages{flex:1;overflow:hidden;position:relative;}
+.page{position:absolute;inset:0;overflow-y:auto;padding-bottom:90px;opacity:0;pointer-events:none;transition:opacity .22s ease;scrollbar-width:none;}
+.page::-webkit-scrollbar{display:none;}
+.page.active{opacity:1;pointer-events:all;}
+.bottom-nav{display:flex;flex-shrink:0;background:rgba(250,250,250,.96);backdrop-filter:blur(20px);border-top:1px solid var(--gray-3);z-index:20;}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 0 14px;cursor:pointer;border:none;background:none;color:var(--gray-5);font-size:10.5px;font-family:'Noto Sans SC',sans-serif;font-weight:300;letter-spacing:.3px;transition:color .2s;position:relative;}
+.nav-item .ni{font-size:20px;line-height:1;}
+.nav-item.active{color:var(--black);font-weight:500;}
+.nav-item.active::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:22px;height:2.5px;background:var(--black);border-radius:0 0 3px 3px;}
+.nav-badge{position:absolute;top:9px;right:calc(50% - 14px);width:7px;height:7px;background:#e44;border-radius:50%;display:none;}
+.nav-badge.show{display:block;}
+.fi,.fs,.ft{width:100%;border:1.5px solid var(--gray-3);border-radius:var(--radius-sm);padding:11px 13px;font-size:13.5px;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--black);background:var(--white);appearance:none;outline:none;transition:border-color .2s;}
+.fi::placeholder,.ft::placeholder{color:var(--gray-5);}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--black);}
+.ft{resize:none;min-height:110px;line-height:1.7;}
+.form-group{margin-bottom:18px;}
+.form-label{display:block;font-size:11.5px;color:var(--gray-5);margin-bottom:6px;letter-spacing:.3px;}
+.form-label .req{color:var(--black);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.ms-wrap{display:flex;flex-wrap:wrap;gap:7px;}
+.ms-chip{padding:7px 13px;border:1.5px solid var(--gray-3);border-radius:999px;font-size:12.5px;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--gray-5);cursor:pointer;transition:all .15s;user-select:none;}
+.ms-chip.sel{background:var(--black);border-color:var(--black);color:var(--white);}
+.cb-row{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--gray-7);font-weight:300;cursor:pointer;}
+.cb-row input[type=checkbox]{width:17px;height:17px;accent-color:var(--black);cursor:pointer;}
+.submit-btn{width:100%;padding:14px;background:var(--black);color:var(--white);border:none;border-radius:var(--radius);font-size:15px;font-family:'Noto Sans SC',sans-serif;font-weight:400;letter-spacing:.5px;cursor:pointer;margin-top:8px;transition:opacity .2s;}
+.submit-btn:hover{opacity:.78;}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+/* discover */
+.search-wrap{padding:14px 22px 0;}
+.search-box{display:flex;align-items:center;gap:10px;border:1.5px solid var(--gray-3);border-radius:999px;padding:10px 16px;transition:border-color .2s;}
+.search-box:focus-within{border-color:var(--black);}
+.search-box input{flex:1;border:none;outline:none;background:none;font-size:13.5px;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--black);}
+.search-box input::placeholder{color:var(--gray-5);}
+.s-icon{font-size:15px;color:var(--gray-5);}
+.filter-scroll{padding:12px 22px 0;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;}
+.filter-scroll::-webkit-scrollbar{display:none;}
+.fchip{flex-shrink:0;border:1.5px solid var(--gray-3);border-radius:999px;padding:6px 13px;font-size:12px;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--gray-5);cursor:pointer;background:none;transition:all .15s;white-space:nowrap;}
+.fchip.on,.fchip:hover{background:var(--black);border-color:var(--black);color:var(--white);}
+.filter-drawer{margin:0 22px;overflow:hidden;max-height:0;transition:max-height .35s ease;}
+.filter-drawer.open{max-height:280px;}
+.fd-inner{border:1.5px solid var(--gray-3);border-radius:var(--radius);padding:16px;margin-top:12px;display:flex;flex-direction:column;gap:12px;}
+.fd-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fd-field label{display:block;font-size:11px;color:var(--gray-5);margin-bottom:5px;}
+.fd-field select,.fd-field input{width:100%;border:1.5px solid var(--gray-3);border-radius:var(--radius-sm);padding:8px 11px;font-size:13px;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--black);background:var(--white);appearance:none;outline:none;transition:border-color .2s;}
+.fd-field select:focus,.fd-field input:focus{border-color:var(--black);}
+.result-count{padding:14px 22px 8px;font-size:12px;color:var(--gray-5);}
+/* cards */
+.card-list{padding:0 22px;display:flex;flex-direction:column;gap:14px;}
+.card{border:1.5px solid var(--gray-3);border-radius:var(--radius);padding:18px;cursor:pointer;transition:border-color .2s,box-shadow .2s;background:var(--white);}
+.card:hover{border-color:var(--gray-7);box-shadow:0 4px 20px rgba(0,0,0,.06);}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.card-location,.card-date{font-size:11.5px;color:var(--gray-5);}
+.card-event{font-size:17px;font-weight:500;letter-spacing:-.3px;line-height:1.3;margin-bottom:6px;}
+.card-idol{font-size:13px;color:var(--gray-5);margin-bottom:11px;font-weight:300;}
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:11px;}
+.tag{font-size:11.5px;padding:4px 10px;border-radius:999px;font-weight:300;}
+.tag-dark{background:var(--black);color:var(--white);}
+.tag-light{background:var(--gray-1);color:var(--gray-7);}
+.tag-outline{border:1.5px solid var(--gray-3);color:var(--gray-5);}
+.person-block{background:var(--gray-1);border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:11px;}
+.person-block-header{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.avatar-sm{width:28px;height:28px;border-radius:50%;background:var(--gray-3);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;overflow:hidden;}
+.avatar-sm img{width:100%;height:100%;object-fit:cover;}
+.person-name{font-size:12.5px;font-weight:500;color:var(--black);}
+.person-city{font-size:11.5px;color:var(--gray-5);font-weight:300;margin-left:auto;}
+.person-desc{font-size:12.5px;color:var(--gray-7);line-height:1.65;font-weight:300;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.card-footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--gray-1);padding-top:11px;margin-top:4px;}
+.card-stats{display:flex;gap:14px;}
+.card-stat{font-size:12px;color:var(--gray-5);}
+.dm-btn{font-size:12px;padding:7px 15px;border:1.5px solid var(--gray-3);border-radius:999px;background:none;cursor:pointer;font-family:'Noto Sans SC',sans-serif;font-weight:400;color:var(--black);transition:all .2s;}
+.dm-btn:hover{background:var(--black);color:var(--white);border-color:var(--black);}
+/* publish */
+.pub-inner{padding:10px 22px 0;}
+.page-title{font-size:23px;font-weight:500;letter-spacing:-.5px;margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--gray-5);font-weight:300;margin-bottom:24px;line-height:1.6;}
+.login-gate{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:14px;text-align:center;padding:0 36px;}
+.login-gate .big{font-size:44px;opacity:.18;}
+.login-gate h3{font-size:17px;font-weight:400;color:var(--gray-7);}
+.login-gate p{font-size:13px;color:var(--gray-5);line-height:1.7;font-weight:300;}
+.go-btn{margin-top:4px;padding:11px 28px;background:var(--black);color:var(--white);border:none;border-radius:999px;font-size:13.5px;font-family:'Noto Sans SC',sans-serif;font-weight:400;cursor:pointer;transition:opacity .2s;}
+.go-btn:hover{opacity:.75;}
+/* messages */
+.conv-list{display:flex;flex-direction:column;}
+.conv-item{display:flex;align-items:center;gap:13px;padding:14px 22px;border-bottom:1px solid var(--gray-1);cursor:pointer;transition:background .15s;}
+.conv-item:hover{background:var(--gray-1);}
+.conv-avatar{width:44px;height:44px;border-radius:50%;background:var(--gray-1);border:1.5px solid var(--gray-3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden;}
+.conv-avatar img{width:100%;height:100%;object-fit:cover;}
+.conv-info{flex:1;min-width:0;}
+.conv-name{font-size:14px;font-weight:500;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.conv-preview{font-size:12.5px;color:var(--gray-5);font-weight:300;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.conv-time{font-size:11px;color:var(--gray-5);font-weight:300;}
+.dm-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:55vh;gap:14px;text-align:center;padding:0 40px;}
+.dm-empty .big{font-size:48px;opacity:.18;}
+.dm-empty h3{font-size:17px;font-weight:400;color:var(--gray-7);}
+.dm-empty p{font-size:13px;color:var(--gray-5);line-height:1.8;font-weight:300;}
+/* chat panel */
+.chat-panel{position:absolute;inset:0;background:var(--white);transform:translateX(100%);transition:transform .28s ease;z-index:50;display:flex;flex-direction:column;}
+.chat-panel.open{transform:translateX(0);}
+.chat-header{padding:14px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--gray-1);flex-shrink:0;}
+.chat-back{background:none;border:none;cursor:pointer;font-size:22px;color:var(--black);padding:0 8px 0 0;line-height:1;}
+.chat-peer-avatar{width:36px;height:36px;border-radius:50%;background:var(--gray-1);border:1.5px solid var(--gray-3);display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;flex-shrink:0;}
+.chat-peer-avatar img{width:100%;height:100%;object-fit:cover;}
+.chat-peer-name{font-size:15px;font-weight:500;letter-spacing:-.2px;}
+.chat-peer-sub{font-size:11.5px;color:var(--gray-5);font-weight:300;}
+.chat-messages{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px;scrollbar-width:none;}
+.chat-messages::-webkit-scrollbar{display:none;}
+.bubble-wrap{display:flex;flex-direction:column;gap:3px;}
+.bubble-wrap.mine{align-items:flex-end;}
+.bubble-wrap.theirs{align-items:flex-start;}
+.bubble{max-width:72%;padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.55;font-weight:300;word-break:break-word;}
+.bubble.mine{background:var(--black);color:var(--white);border-bottom-right-radius:5px;}
+.bubble.theirs{background:var(--gray-1);color:var(--black);border-bottom-left-radius:5px;}
+.bubble-time{font-size:10.5px;color:var(--gray-5);font-weight:300;}
+.chat-date-sep{text-align:center;font-size:11px;color:var(--gray-5);font-weight:300;margin:4px 0;}
+.chat-input-wrap{padding:12px 16px;border-top:1px solid var(--gray-1);display:flex;gap:10px;align-items:flex-end;flex-shrink:0;background:var(--white);}
+.chat-input{flex:1;border:1.5px solid var(--gray-3);border-radius:22px;padding:10px 16px;font-size:14px;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--black);background:var(--white);outline:none;resize:none;max-height:100px;line-height:1.5;transition:border-color .2s;}
+.chat-input:focus{border-color:var(--black);}
+.chat-send{width:40px;height:40px;border-radius:50%;background:var(--black);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .2s;}
+.chat-send:hover{opacity:.75;}
+.chat-send svg{width:16px;height:16px;fill:none;stroke:white;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.chat-hint{padding:40px 0;text-align:center;color:var(--gray-5);font-size:13px;font-weight:300;}
+/* my */
+.profile-sec{padding:20px 22px 24px;border-bottom:1px solid var(--gray-1);}
+.profile-avatar{width:64px;height:64px;border-radius:50%;background:var(--gray-1);border:1.5px solid var(--gray-3);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:14px;overflow:hidden;cursor:pointer;transition:opacity .2s;}
+.profile-avatar:hover{opacity:.8;}
+.profile-avatar img{width:100%;height:100%;object-fit:cover;}
+.profile-name{font-size:20px;font-weight:500;letter-spacing:-.3px;margin-bottom:3px;}
+.profile-idol{font-size:13px;color:var(--gray-5);font-weight:300;margin-bottom:6px;}
+.profile-bio{font-size:13px;color:var(--gray-7);font-weight:300;line-height:1.6;margin-bottom:14px;}
+.profile-edit-btn{font-size:12px;padding:6px 16px;border:1.5px solid var(--gray-3);border-radius:999px;background:none;cursor:pointer;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--gray-7);transition:all .2s;}
+.profile-edit-btn:hover{border-color:var(--black);color:var(--black);}
+.sec-head{padding:18px 22px 10px;font-size:11.5px;font-weight:500;letter-spacing:.5px;color:var(--gray-5);text-transform:uppercase;}
+.my-posts{padding:0 22px;display:flex;flex-direction:column;gap:10px;}
+.my-post{border:1.5px solid var(--gray-3);border-radius:var(--radius-sm);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.my-post-title{font-size:14px;font-weight:400;margin-bottom:3px;}
+.my-post-meta{font-size:12px;color:var(--gray-5);font-weight:300;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--gray-3);flex-shrink:0;}
+.dot.on{background:#5cb85c;}
+.setting-item{padding:14px 22px;border-bottom:1px solid var(--gray-1);font-size:14px;color:var(--gray-7);font-weight:300;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+.setting-item .arr{color:var(--gray-3);}
+/* auth */
+.auth-section{padding:24px 22px 0;}
+.auth-tabs{display:flex;margin-bottom:24px;border-bottom:1.5px solid var(--gray-1);}
+.auth-tab{flex:1;text-align:center;padding:10px 0;font-size:14px;font-weight:300;color:var(--gray-5);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1.5px;transition:all .2s;font-family:'Noto Sans SC',sans-serif;}
+.auth-tab.active{color:var(--black);font-weight:500;border-bottom-color:var(--black);}
+.auth-intro{font-size:13px;color:var(--gray-5);font-weight:300;line-height:1.7;margin-bottom:22px;}
+.auth-btn{width:100%;padding:13px;background:var(--black);color:var(--white);border:none;border-radius:var(--radius);font-size:14.5px;font-family:'Noto Sans SC',sans-serif;font-weight:400;letter-spacing:.3px;cursor:pointer;transition:opacity .2s;margin-top:4px;}
+.auth-btn:hover{opacity:.78;}
+.auth-btn:disabled{opacity:.4;cursor:not-allowed;}
+.auth-switch{text-align:center;margin-top:16px;font-size:12.5px;color:var(--gray-5);font-weight:300;}
+.auth-switch span{color:var(--black);cursor:pointer;font-weight:400;}
+.auth-switch span:hover{text-decoration:underline;}
+/* modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:100;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-sheet{width:100%;max-width:430px;background:var(--white);border-radius:20px 20px 0 0;padding:0 0 32px;transform:translateY(40px);transition:transform .28s ease;max-height:90dvh;overflow-y:auto;scrollbar-width:none;}
+.modal-overlay.open .modal-sheet{transform:translateY(0);}
+.modal-sheet::-webkit-scrollbar{display:none;}
+.modal-handle{width:36px;height:4px;background:var(--gray-3);border-radius:2px;margin:14px auto 20px;}
+.modal-title{font-size:17px;font-weight:500;letter-spacing:-.3px;padding:0 22px;margin-bottom:20px;}
+.modal-body{padding:0 22px;display:flex;flex-direction:column;gap:16px;}
+/* avatar upload */
+.av-upload-row{display:flex;align-items:center;gap:16px;}
+.av-preview{width:64px;height:64px;border-radius:50%;background:var(--gray-1);border:1.5px solid var(--gray-3);display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden;flex-shrink:0;}
+.av-preview img{width:100%;height:100%;object-fit:cover;}
+.av-upload-col{display:flex;flex-direction:column;gap:8px;}
+.av-upload-btn{padding:8px 16px;border:1.5px solid var(--gray-3);border-radius:999px;font-size:12.5px;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--gray-7);background:none;cursor:pointer;transition:all .2s;}
+.av-upload-btn:hover{border-color:var(--black);color:var(--black);}
+.av-hint{font-size:11px;color:var(--gray-5);font-weight:300;line-height:1.5;}
+.av-emoji-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+.av-emoji{width:36px;height:36px;border-radius:50%;background:var(--gray-1);border:1.5px solid transparent;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:border-color .15s;}
+.av-emoji.picked{border-color:var(--black);}
+/* toast */
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--black);color:var(--white);padding:11px 22px;border-radius:999px;font-size:13px;font-family:'Noto Sans SC',sans-serif;font-weight:300;opacity:0;pointer-events:none;transition:all .28s ease;z-index:999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
@@ -236,17 +199,11 @@ html, body { height: 100%; background: #ddd; font-family: 'Noto Sans SC', sans-s
     <div class="logo">搭子<span> · kpop</span></div>
     <button class="icon-btn">🔔</button>
   </div>
-
   <div class="pages">
 
-    <!-- ① 发现 -->
+    <!-- 发现 -->
     <div class="page active" id="page-discover">
-      <div class="search-wrap">
-        <div class="search-box">
-          <span class="s-icon">🔍</span>
-          <input type="text" placeholder="搜索活动、城市、本命…" id="searchInput" oninput="window.filterCards()">
-        </div>
-      </div>
+      <div class="search-wrap"><div class="search-box"><span class="s-icon">🔍</span><input type="text" placeholder="搜索活动、城市、本命…" id="searchInput" oninput="window.filterCards()"></div></div>
       <div class="filter-scroll">
         <button class="fchip on" id="drawerBtn" onclick="window.toggleDrawer()">筛选 ⌃</button>
         <button class="fchip type-chip on" data-type="" onclick="window.selectType(this)">全部</button>
@@ -274,11 +231,8 @@ html, body { height: 100%; background: #ddd; font-family: 'Noto Sans SC', sans-s
       </div>
       <div class="filter-drawer open" id="filterDrawer">
         <div class="fd-inner">
-          <div class="fd-field">
-            <label>地区（自定义搜索）</label>
-            <input type="text" id="f-city" placeholder="输入城市或国家，如：首尔、曼谷…" oninput="window.onCityInput()">
-          </div>
-          <div class="fd-row">
+          <div class="fd-field"><label>地区（自定义搜索）</label><input type="text" id="f-city" placeholder="输入城市或国家，如：首尔、曼谷…" oninput="window.onCityInput()"></div>
+ <div class="fd-row">
             <div class="fd-field">
               <label>性别要求</label>
               <select id="f-gender" onchange="window.filterCards()">
@@ -379,72 +333,43 @@ html, body { height: 100%; background: #ddd; font-family: 'Noto Sans SC', sans-s
             <span class="ms-chip" onclick="window.toggleChip(this)">接上下班</span>
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">关于我 <span class="req">*</span></label>
-          <textarea class="ft" id="pub-about" placeholder="介绍一下自己吧～粉龄、性格、对搭子的期望……让对方更快了解你 💬" rows="4"></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">活动补充描述</label>
-          <textarea class="ft" id="pub-desc" placeholder="座位区域、排队计划、应援安排等" rows="3"></textarea>
-        </div>
-        <div class="form-group">
-          <label class="cb-row">
-            <input type="checkbox" id="pub-dm" checked>
-            允许其他人通过消息联系我
-          </label>
-        </div>
+        <div class="form-group"><label class="form-label">关于我 <span class="req">*</span></label><textarea class="ft" id="pub-about" placeholder="介绍一下自己吧～粉龄、性格、对搭子的期望……让对方更快了解你 💬" rows="4"></textarea></div>
+        <div class="form-group"><label class="form-label">活动补充描述</label><textarea class="ft" id="pub-desc" placeholder="座位区域、排队计划、应援安排等" rows="3"></textarea></div>
+        <div class="form-group"><label class="cb-row"><input type="checkbox" id="pub-dm" checked>允许其他人通过消息联系我</label></div>
         <button class="submit-btn" id="submitBtn" onclick="window.submitPost()">发布行程</button>
         <div style="height:16px"></div>
       </div>
     </div>
 
-    <!-- ③ 消息 -->
-    <div class="page" id="page-dm" style="padding-bottom:0">
-      <!-- 会话列表 -->
-      <div class="msg-list-view" id="msgListView">
-        <div style="padding:18px 22px 12px;font-size:20px;font-weight:500;letter-spacing:-.4px;border-bottom:1px solid var(--gray-1)">消息</div>
-        <div class="login-gate" id="msgLoginGate" style="height:50vh">
-          <div class="big">💬</div>
-          <h3>登录后查看消息</h3>
-          <p>与搭子实时私聊 🤍</p>
-          <button class="go-btn" onclick="window.goToLogin()">去登录 →</button>
-        </div>
-        <div id="convList" class="conv-list" style="display:none"></div>
-        <div class="msg-empty" id="convEmpty" style="display:none">
-          <div class="big">💬</div>
-          <p>还没有消息<br>去发现页找到你的搭子<br>点「消息」开始聊天～</p>
-        </div>
+    <!-- 消息 -->
+    <div class="page" id="page-dm" style="padding-bottom:0;">
+      <div id="dmMain" style="height:100%;overflow-y:auto;padding-bottom:90px;">
+        <div style="padding:18px 22px 12px;font-size:19px;font-weight:500;letter-spacing:-.3px;border-bottom:1px solid var(--gray-1);">消息</div>
+        <div id="convList"></div>
       </div>
-      <!-- 聊天视图 -->
-      <div class="msg-chat-view" id="msgChatView">
-        <div class="msg-topbar">
-          <button class="msg-back" onclick="window.closeChat()">‹</button>
-          <div class="msg-peer-av" id="chatPeerAv">🌸</div>
-          <div>
-            <div class="msg-peer-name" id="chatPeerName">—</div>
-            <div class="msg-peer-sub" id="chatPeerSub"></div>
-          </div>
+      <div class="chat-panel" id="chatPanel">
+        <div class="chat-header">
+          <button class="chat-back" onclick="window.closeChat()">‹</button>
+          <div class="chat-peer-avatar" id="chatPeerAvatar">🌸</div>
+          <div><div class="chat-peer-name" id="chatPeerName">—</div><div class="chat-peer-sub" id="chatPeerSub"></div></div>
         </div>
-        <div class="msg-bubbles" id="msgBubbles"></div>
-        <div class="msg-input-bar">
-          <textarea class="msg-input" id="msgInput" placeholder="发送消息…" rows="1"
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-wrap">
+          <textarea class="chat-input" id="chatInput" placeholder="发送消息…" rows="1"
             oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
-            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();window.sendMessage()}"></textarea>
-          <button class="msg-send" onclick="window.sendMessage()">
-            <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();window.sendMessage();}"></textarea>
+          <button class="chat-send" onclick="window.sendMessage()">
+            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- ④ 我的 -->
+    <!-- 我的 -->
     <div class="page" id="page-my">
       <div id="profileSection" style="display:none">
         <div class="profile-sec">
-          <div class="profile-avatar" id="profileAvatar" onclick="window.openEditModal()">
-            <span id="profileAvatarContent">🌸</span>
-            <div class="profile-avatar-overlay"><span>✏️</span></div>
-          </div>
+          <div class="profile-avatar" id="profileAvatar" onclick="window.openEditModal()" title="点击编辑">🌸</div>
           <div class="profile-name" id="profileName">—</div>
           <div class="profile-idol" id="profileIdol"></div>
           <div class="profile-bio" id="profileBio"></div>
@@ -457,10 +382,7 @@ html, body { height: 100%; background: #ddd; font-family: 'Noto Sans SC', sans-s
       </div>
       <div id="authSection">
         <div class="auth-section">
-          <div style="margin-bottom:20px">
-            <div style="font-size:23px;font-weight:500;letter-spacing:-.5px;margin-bottom:4px;">欢迎回来</div>
-            <div class="auth-intro">登录后发布行程、管理你的搭子记录 🤍</div>
-          </div>
+          <div style="margin-bottom:20px"><div style="font-size:23px;font-weight:500;letter-spacing:-.5px;margin-bottom:4px;">欢迎回来</div><div class="auth-intro">登录后发布行程、管理你的搭子记录 🤍</div></div>
           <div class="auth-tabs">
             <button class="auth-tab active" id="tabLogin" onclick="window.switchAuthTab('login')">登录</button>
             <button class="auth-tab" id="tabRegister" onclick="window.switchAuthTab('register')">注册</button>
@@ -482,12 +404,12 @@ html, body { height: 100%; background: #ddd; font-family: 'Noto Sans SC', sans-s
         </div>
       </div>
     </div>
-  </div>
 
+  </div>
   <nav class="bottom-nav">
     <button class="nav-item active" onclick="window.switchPage('discover',this)"><span class="ni">🔍</span>发现</button>
     <button class="nav-item" onclick="window.switchPage('publish',this)"><span class="ni">＋</span>发布</button>
-    <button class="nav-item" id="navMsg" onclick="window.switchPage('dm',this)"><span class="ni">💬</span>消息<div class="nav-badge" id="msgBadge"></div></button>
+    <button class="nav-item" id="navDm" onclick="window.switchPage('dm',this)"><span class="ni">💬</span>消息<span class="nav-badge" id="dmBadge"></span></button>
     <button class="nav-item" onclick="window.switchPage('my',this)"><span class="ni">👤</span>我的</button>
   </nav>
 </div>
@@ -498,25 +420,18 @@ html, body { height: 100%; background: #ddd; font-family: 'Noto Sans SC', sans-s
     <div class="modal-handle"></div>
     <div class="modal-title">编辑资料</div>
     <div class="modal-body">
-
-      <!-- 头像区域 -->
       <div>
         <div style="font-size:11.5px;color:var(--gray-5);margin-bottom:10px;letter-spacing:.3px;">头像</div>
-        <div class="avatar-upload-area">
-          <div class="avatar-upload-preview" id="editAvatarPreview" onclick="document.getElementById('avatarFileInput').click()">
-            <span id="editAvatarContent">🌸</span>
-          </div>
-          <div class="avatar-upload-actions">
-            <label class="avatar-upload-btn" for="avatarFileInput">📷 上传照片</label>
-            <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="window.handleAvatarFile(this)">
-            <div class="avatar-hint">JPG / PNG · 最大 2MB<br>建议正方形，自动裁剪为圆形</div>
+        <div class="av-upload-row">
+          <div class="av-preview" id="editAvatarPreview">🌸</div>
+          <div class="av-upload-col">
+            <button class="av-upload-btn" onclick="document.getElementById('avatarFileInput').click()">📷 上传照片</button>
+            <div class="av-hint">JPG / PNG · 最大 2MB<br>超出尺寸自动压缩至 400px</div>
           </div>
         </div>
-        <div class="upload-progress" id="uploadProgress"><div class="upload-progress-bar" id="uploadProgressBar"></div></div>
-        <div style="font-size:11.5px;color:var(--gray-5);margin:12px 0 8px;letter-spacing:.3px;">或选择 Emoji 头像</div>
-        <div class="avatar-emoji-row" id="avatarGrid"></div>
+        <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="window.handleAvatarFile(event)">
+        <div class="av-emoji-grid" id="avatarGrid"></div>
       </div>
-
       <div class="form-group" style="margin:0"><label class="form-label">昵称 <span class="req">*</span></label><input class="fi" id="editUsername" type="text" placeholder="你的昵称"></div>
       <div class="form-group" style="margin:0"><label class="form-label">本命爱豆</label><input class="fi" id="editIdol" type="text" placeholder="如：IVE 안유진"></div>
       <div class="form-group" style="margin:0"><label class="form-label">个人简介</label><textarea class="ft" id="editBio" placeholder="介绍一下自己～" rows="3" style="min-height:80px"></textarea></div>
@@ -525,571 +440,383 @@ html, body { height: 100%; background: #ddd; font-family: 'Noto Sans SC', sans-s
   </div>
 </div>
 
-<!-- 隐藏文件输入（头像用） -->
-<input type="file" id="avatarFileInput2" accept="image/*" style="display:none">
-
 <div class="toast" id="toast"></div>
 
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
 const SUPABASE_URL = 'https://exctfpjjkszzrgckovjl.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_Gs-xsv-eW8LofSV24bpzcA_SZnBgEJR';
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const AVATARS = ['🌸','🐰','🖤','🐇','🍭','⭐','🌙','🎀','🦋','💜','🌿','🔮','🎵','🌺','🐾','✨'];
-const MAX_IMG_SIZE = 2 * 1024 * 1024; // 2MB
-const MAX_DIMENSION = 800; // 压缩到最大 800px
+const MAX_PX = 400, MAX_BYTES = 2*1024*1024;
 
-let currentUser    = null;
-let currentProfile = null;
-let selectedAvatar = '🌸';     // emoji 或 image URL
-let avatarIsImage  = false;    // true = 已上传图片
-let currentConvId  = null;
-let msgChannel     = null;
+let currentUser = null, currentProfile = null;
+let selectedAvatar = '🌸', pendingFile = null;
+let activeChatConvId = null, activeChatPeerId = null;
+let msgSub = null, convSub = null;
 
-// ── Toast ──
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+// ── toast ──
+let tt;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2400);}
+window.showToast=showToast;
+
+// ── helpers ──
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+function setAv(el,val){
+  if(!val){el.textContent='🌸';return;}
+  if(val.startsWith('http')||val.startsWith('/')){el.innerHTML=`<img src="${val}" alt="av">`;}
+  else{el.textContent=val;}
 }
-window.showToast = showToast;
 
-// ── 页面切换 ──
-window.switchPage = function(id, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
+// ── page switch ──
+window.switchPage=function(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
   btn.classList.add('active');
-  if (id === 'discover') loadPosts();
-  if (id === 'my')       renderMyPage();
-  if (id === 'publish')  renderPublishPage();
-  if (id === 'dm')       renderMsgPage();
+  if(id==='discover')loadPosts();
+  if(id==='my')renderMyPage();
+  if(id==='publish')renderPublishPage();
+  if(id==='dm'){renderConvList();document.getElementById('dmBadge').classList.remove('show');}
 };
+window.goToLogin=function(){window.switchPage('my',document.querySelector('.nav-item:nth-child(4)'));};
 
-window.goToLogin = function() {
-  const myBtn = document.querySelector('.nav-item:nth-child(4)');
-  window.switchPage('my', myBtn);
-};
-
-// ── Auth 渲染 ──
-function renderAuthState() {
-  const show = !!currentUser;
-  document.getElementById('profileSection').style.display = show ? 'block' : 'none';
-  document.getElementById('authSection').style.display    = show ? 'none'  : 'block';
+// ── auth state ──
+function renderAuthState(){
+  const on=!!currentUser;
+  document.getElementById('profileSection').style.display=on?'block':'none';
+  document.getElementById('authSection').style.display=on?'none':'block';
 }
-function renderPublishPage() {
-  document.getElementById('publishGate').style.display = currentUser ? 'none'  : 'flex';
-  document.getElementById('publishForm').style.display = currentUser ? 'block' : 'none';
+function renderPublishPage(){
+  document.getElementById('publishGate').style.display=currentUser?'none':'flex';
+  document.getElementById('publishForm').style.display=currentUser?'block':'none';
 }
-async function renderMyPage() {
+async function renderMyPage(){
   renderAuthState();
-  if (!currentUser) return;
+  if(!currentUser)return;
   await loadProfile();
   renderMyPosts();
 }
 
-// ── Avatar 渲染辅助 ──
-function applyAvatarToEl(el, avatarVal) {
-  // el 是包含内容的容器
-  el.innerHTML = '';
-  if (avatarVal && avatarVal.startsWith('http')) {
-    const img = document.createElement('img');
-    img.src = avatarVal;
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
-    el.appendChild(img);
-  } else {
-    el.textContent = avatarVal || '🌸';
-  }
+async function loadProfile(){
+  const{data}=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
+  currentProfile=data;if(!data)return;
+  selectedAvatar=data.avatar_url||'🌸';
+  setAv(document.getElementById('profileAvatar'),selectedAvatar);
+  document.getElementById('profileName').textContent=data.username||'未设置昵称';
+  document.getElementById('profileIdol').textContent=data.my_idol?`본명 · ${data.my_idol}`:'';
+  document.getElementById('profileBio').textContent=data.bio||'';
 }
 
-// ── Profile ──
-async function loadProfile() {
-  const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
-  currentProfile = data;
-  if (!data) return;
-  selectedAvatar = data.avatar_url || '🌸';
-  avatarIsImage  = selectedAvatar.startsWith('http');
-  applyAvatarToEl(document.getElementById('profileAvatarContent'), selectedAvatar);
-  document.getElementById('profileName').textContent  = data.username || '未设置昵称';
-  document.getElementById('profileIdol').textContent  = data.my_idol ? `본명 · ${data.my_idol}` : '';
-  document.getElementById('profileBio').textContent   = data.bio || '';
-}
-
-// ── Auth tab ──
-window.switchAuthTab = function(tab) {
-  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
-  document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
-  document.getElementById('formLogin').style.display    = tab === 'login'    ? 'block' : 'none';
-  document.getElementById('formRegister').style.display = tab === 'register' ? 'block' : 'none';
+// ── auth tabs ──
+window.switchAuthTab=function(tab){
+  document.getElementById('tabLogin').classList.toggle('active',tab==='login');
+  document.getElementById('tabRegister').classList.toggle('active',tab==='register');
+  document.getElementById('formLogin').style.display=tab==='login'?'block':'none';
+  document.getElementById('formRegister').style.display=tab==='register'?'block':'none';
 };
-
-// ── 注册 ──
-window.doRegister = async function() {
-  const email = document.getElementById('regEmail').value.trim();
-  const pw    = document.getElementById('regPassword').value;
-  const name  = document.getElementById('regUsername').value.trim();
-  const idol  = document.getElementById('regIdol').value.trim();
-  if (!email || !pw || !name) { showToast('请填写必填项'); return; }
-  if (pw.length < 6) { showToast('密码至少 6 位'); return; }
-  const btn = document.getElementById('registerBtn');
-  btn.textContent = '注册中…'; btn.disabled = true;
-  const { data, error } = await sb.auth.signUp({ email, password: pw });
-  btn.textContent = '注册'; btn.disabled = false;
-  if (error) { showToast('注册失败：' + error.message); return; }
-  if (data.user) {
-    await sb.from('profiles').upsert({ id: data.user.id, username: name, my_idol: idol || null, avatar_url: '🌸' });
-  }
+window.doRegister=async function(){
+  const email=document.getElementById('regEmail').value.trim();
+  const pw=document.getElementById('regPassword').value;
+  const uname=document.getElementById('regUsername').value.trim();
+  const idol=document.getElementById('regIdol').value.trim();
+  if(!email||!pw||!uname){showToast('请填写必填项');return;}
+  if(pw.length<6){showToast('密码至少 6 位');return;}
+  const btn=document.getElementById('registerBtn');btn.textContent='注册中…';btn.disabled=true;
+  const{data,error}=await sb.auth.signUp({email,password:pw});
+  btn.textContent='注册';btn.disabled=false;
+  if(error){showToast('注册失败：'+error.message);return;}
+  if(data.user)await sb.from('profiles').upsert({id:data.user.id,username:uname,my_idol:idol||null,avatar_url:'🌸'});
   showToast('注册成功！请查收验证邮件 ✓');
 };
-
-// ── 登录 ──
-window.doLogin = async function() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const pw    = document.getElementById('loginPassword').value;
-  if (!email || !pw) { showToast('请填写邮箱和密码'); return; }
-  const btn = document.getElementById('loginBtn');
-  btn.textContent = '登录中…'; btn.disabled = true;
-  const { error } = await sb.auth.signInWithPassword({ email, password: pw });
-  btn.textContent = '登录'; btn.disabled = false;
-  if (error) { showToast('登录失败：' + error.message); return; }
+window.doLogin=async function(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pw=document.getElementById('loginPassword').value;
+  if(!email||!pw){showToast('请填写邮箱和密码');return;}
+  const btn=document.getElementById('loginBtn');btn.textContent='登录中…';btn.disabled=true;
+  const{error}=await sb.auth.signInWithPassword({email,password:pw});
+  btn.textContent='登录';btn.disabled=false;
+  if(error){showToast('登录失败：'+error.message);return;}
   showToast('登录成功 ✓');
 };
+window.signOut=async function(){await sb.auth.signOut();showToast('已退出登录');};
 
-// ── 退出 ──
-window.signOut = async function() {
-  await sb.auth.signOut();
-  showToast('已退出登录');
+// ── avatar file compress ──
+window.handleAvatarFile=async function(e){
+  const file=e.target.files[0];if(!file)return;
+  if(file.size>MAX_BYTES){showToast('图片不能超过 2MB');return;}
+  const bmp=await createImageBitmap(file);
+  const scale=Math.min(1,MAX_PX/Math.max(bmp.width,bmp.height));
+  const w=Math.round(bmp.width*scale),h=Math.round(bmp.height*scale);
+  const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+  cv.getContext('2d').drawImage(bmp,0,0,w,h);
+  cv.toBlob(blob=>{
+    pendingFile=blob;selectedAvatar=null;
+    const url=URL.createObjectURL(blob);
+    const prev=document.getElementById('editAvatarPreview');
+    prev.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    document.querySelectorAll('.av-emoji').forEach(el=>el.classList.remove('picked'));
+  },'image/jpeg',0.88);
+  e.target.value='';
 };
 
-// ══════════════════════════════════════
-// ── 头像上传 ──
-// ══════════════════════════════════════
-
-// 图片压缩（canvas）
-function compressImage(file, maxDim, quality) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        let { width, height } = img;
-        if (width > maxDim || height > maxDim) {
-          if (width > height) { height = Math.round(height * maxDim / width); width = maxDim; }
-          else { width = Math.round(width * maxDim / height); height = maxDim; }
-        }
-        const canvas = document.createElement('canvas');
-        canvas.width = width; canvas.height = height;
-        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-        canvas.toBlob(resolve, 'image/jpeg', quality || 0.82);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-window.handleAvatarFile = async function(input) {
-  const file = input.files[0];
-  if (!file) return;
-  if (!file.type.startsWith('image/')) { showToast('请选择图片文件'); return; }
-  if (file.size > MAX_IMG_SIZE) { showToast('图片最大 2MB'); input.value = ''; return; }
-
-  // 显示进度条
-  const prog = document.getElementById('uploadProgress');
-  const bar  = document.getElementById('uploadProgressBar');
-  prog.classList.add('show'); bar.style.width = '30%';
-
-  try {
-    // 压缩
-    const compressed = await compressImage(file, MAX_DIMENSION, 0.82);
-    bar.style.width = '55%';
-
-    const ext      = 'jpg';
-    const fileName = `${currentUser.id}_${Date.now()}.${ext}`;
-    const { error: upErr } = await sb.storage.from('avatars').upload(fileName, compressed, {
-      contentType: 'image/jpeg', upsert: true
-    });
-    if (upErr) throw upErr;
-    bar.style.width = '85%';
-
-    const { data: urlData } = sb.storage.from('avatars').getPublicUrl(fileName);
-    selectedAvatar = urlData.publicUrl;
-    avatarIsImage  = true;
-    bar.style.width = '100%';
-
-    // 更新预览
-    applyAvatarToEl(document.getElementById('editAvatarContent'), selectedAvatar);
-    // 清除 emoji 选中
-    document.querySelectorAll('.avatar-emoji').forEach(e => e.classList.remove('picked'));
-
-    showToast('图片上传成功 ✓');
-  } catch(e) {
-    showToast('上传失败：' + e.message);
-  } finally {
-    setTimeout(() => { prog.classList.remove('show'); bar.style.width = '0'; }, 600);
-    input.value = '';
-  }
-};
-
-// ── 编辑资料弹窗 ──
-window.openEditModal = function() {
-  document.getElementById('editUsername').value = currentProfile?.username || '';
-  document.getElementById('editIdol').value     = currentProfile?.my_idol  || '';
-  document.getElementById('editBio').value      = currentProfile?.bio      || '';
-  selectedAvatar = currentProfile?.avatar_url || '🌸';
-  avatarIsImage  = selectedAvatar.startsWith('http');
-  applyAvatarToEl(document.getElementById('editAvatarContent'), selectedAvatar);
-  // emoji 格
-  const grid = document.getElementById('avatarGrid');
-  grid.innerHTML = AVATARS.map(e =>
-    `<div class="avatar-emoji ${e===selectedAvatar?'picked':''}" onclick="window.pickEmoji(this,'${e}')">${e}</div>`
+// ── edit modal ──
+window.openEditModal=function(){
+  document.getElementById('editUsername').value=currentProfile?.username||'';
+  document.getElementById('editIdol').value=currentProfile?.my_idol||'';
+  document.getElementById('editBio').value=currentProfile?.bio||'';
+  selectedAvatar=currentProfile?.avatar_url||'🌸';pendingFile=null;
+  setAv(document.getElementById('editAvatarPreview'),selectedAvatar);
+  document.getElementById('avatarGrid').innerHTML=AVATARS.map(e=>
+    `<div class="av-emoji ${e===selectedAvatar?'picked':''}" onclick="window.pickAvatar(this,'${e}')">${e}</div>`
   ).join('');
   document.getElementById('editModal').classList.add('open');
 };
-window.closeEditModal = function(e) {
-  if (e.target === document.getElementById('editModal'))
-    document.getElementById('editModal').classList.remove('open');
+window.closeEditModal=function(e){if(e.target===document.getElementById('editModal'))document.getElementById('editModal').classList.remove('open');};
+window.pickAvatar=function(el,emoji){
+  pendingFile=null;
+  document.querySelectorAll('.av-emoji').forEach(e=>e.classList.remove('picked'));
+  el.classList.add('picked');selectedAvatar=emoji;
+  document.getElementById('editAvatarPreview').textContent=emoji;
 };
-window.pickEmoji = function(el, emoji) {
-  document.querySelectorAll('.avatar-emoji').forEach(e => e.classList.remove('picked'));
-  el.classList.add('picked');
-  selectedAvatar = emoji; avatarIsImage = false;
-  applyAvatarToEl(document.getElementById('editAvatarContent'), emoji);
-};
-window.saveProfile = async function() {
-  const username = document.getElementById('editUsername').value.trim();
-  const idol     = document.getElementById('editIdol').value.trim();
-  const bio      = document.getElementById('editBio').value.trim();
-  if (!username) { showToast('昵称不能为空'); return; }
-  const btn = document.getElementById('saveProfileBtn');
-  btn.textContent = '保存中…'; btn.disabled = true;
-  const { error } = await sb.from('profiles').upsert({
-    id: currentUser.id, username,
-    my_idol: idol || null, bio: bio || null,
-    avatar_url: selectedAvatar, updated_at: new Date().toISOString()
-  });
-  btn.textContent = '保存资料'; btn.disabled = false;
-  if (error) { showToast('保存失败：' + error.message); return; }
+window.saveProfile=async function(){
+  const uname=document.getElementById('editUsername').value.trim();
+  const idol=document.getElementById('editIdol').value.trim();
+  const bio=document.getElementById('editBio').value.trim();
+  if(!uname){showToast('昵称不能为空');return;}
+  const btn=document.getElementById('saveProfileBtn');btn.textContent='保存中…';btn.disabled=true;
+  let avVal=selectedAvatar;
+  if(pendingFile){
+    const path=`${currentUser.id}/avatar.jpg`;
+    const{error:ue}=await sb.storage.from('avatars').upload(path,pendingFile,{contentType:'image/jpeg',upsert:true});
+    if(ue){showToast('头像上传失败：'+ue.message);btn.textContent='保存资料';btn.disabled=false;return;}
+    const{data:ud}=sb.storage.from('avatars').getPublicUrl(path);
+    avVal=ud.publicUrl+'?t='+Date.now();
+  }
+  const{error}=await sb.from('profiles').upsert({id:currentUser.id,username:uname,my_idol:idol||null,bio:bio||null,avatar_url:avVal,updated_at:new Date().toISOString()});
+  btn.textContent='保存资料';btn.disabled=false;
+  if(error){showToast('保存失败：'+error.message);return;}
   document.getElementById('editModal').classList.remove('open');
   showToast('资料已更新 ✓');
   await loadProfile();
 };
 
-// ══════════════════════════════════════
-// ── 消息系统 ──
-// ══════════════════════════════════════
+// ══ 消息系统 ══
 
-function renderMsgPage() {
-  if (!currentUser) {
-    document.getElementById('msgLoginGate').style.display = 'flex';
-    document.getElementById('convList').style.display = 'none';
-    document.getElementById('convEmpty').style.display = 'none';
-    return;
+window.startChat=async function(peerUid,peerName,peerAv,postId){
+  if(!currentUser){showToast('请先登录才能发消息');window.goToLogin();return;}
+  if(peerUid===currentUser.id){showToast('不能给自己发消息');return;}
+  // user_a < user_b 保证唯一
+  const[ua,ub]=[currentUser.id,peerUid].sort();
+  let{data:conv}=await sb.from('conversations').select('*').eq('user_a',ua).eq('user_b',ub).maybeSingle();
+  if(!conv){
+    const{data:nc,error}=await sb.from('conversations').insert({user_a:ua,user_b:ub,post_id:postId||null}).select().single();
+    if(error){showToast('无法发起会话：'+error.message);return;}
+    conv=nc;
   }
-  document.getElementById('msgLoginGate').style.display = 'none';
-  loadConversations();
+  openChatPanel(conv.id,peerUid,peerName,peerAv);
+  if(!document.getElementById('page-dm').classList.contains('active')){
+    window.switchPage('dm',document.getElementById('navDm'));
+  }
+};
+
+function openChatPanel(convId,peerId,peerName,peerAv){
+  activeChatConvId=convId;activeChatPeerId=peerId;
+  document.getElementById('chatPeerName').textContent=peerName||'搭子';
+  setAv(document.getElementById('chatPeerAvatar'),peerAv||'🌸');
+  document.getElementById('chatMessages').innerHTML='<div class="chat-hint">加载中…</div>';
+  document.getElementById('chatPanel').classList.add('open');
+  loadMessages(convId);
+  subMessages(convId);
 }
 
-// 加载会话列表
-async function loadConversations() {
-  const { data, error } = await sb
-    .from('conversations')
-    .select('*, profiles_a:profiles!conversations_user_a_fkey(username,avatar_url), profiles_b:profiles!conversations_user_b_fkey(username,avatar_url)')
-    .or(`user_a.eq.${currentUser.id},user_b.eq.${currentUser.id}`)
-    .order('last_at', { ascending: false });
+window.closeChat=function(){
+  document.getElementById('chatPanel').classList.remove('open');
+  if(msgSub){msgSub.unsubscribe();msgSub=null;}
+  activeChatConvId=null;activeChatPeerId=null;
+  renderConvList();
+};
 
-  const convList  = document.getElementById('convList');
-  const convEmpty = document.getElementById('convEmpty');
+// 已渲染的消息 id 集合，防止 Realtime 和历史记录重复
+let renderedMsgIds = new Set();
 
-  if (error || !data?.length) {
-    convList.style.display  = 'none';
-    convEmpty.style.display = 'flex';
+async function loadMessages(convId){
+  renderedMsgIds.clear();
+  const{data,error}=await sb.from('messages')
+    .select('*').eq('conversation_id',convId)
+    .order('created_at',{ascending:true});
+  if(error){showToast('加载消息失败');return;}
+  renderMessages(data||[]);
+}
+
+function renderMessages(msgs){
+  const box=document.getElementById('chatMessages');
+  if(!msgs.length){
+    box.innerHTML='<div class="chat-hint">还没有消息，发个招呼吧 👋</div>';
     return;
   }
-
-  convList.style.display  = 'block';
-  convEmpty.style.display = 'none';
-
-  convList.innerHTML = data.map(conv => {
-    const isMeA   = conv.user_a === currentUser.id;
-    const peerProf = isMeA ? conv.profiles_b : conv.profiles_a;
-    const peerId   = isMeA ? conv.user_b : conv.user_a;
-    const peerName = peerProf?.username || '搭子';
-    const peerAv   = peerProf?.avatar_url || '🌸';
-    const preview  = conv.last_message || '还没有消息';
-    const timeStr  = conv.last_at ? new Date(conv.last_at).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}) : '';
-    const avHtml   = peerAv.startsWith('http')
-      ? `<img src="${peerAv}" style="width:100%;height:100%;object-fit:cover">`
-      : peerAv;
-    return `
-      <div class="conv-item" onclick="window.openChat('${conv.id}','${peerId}','${peerName}','${peerAv}')">
-        <div class="conv-av">${avHtml}</div>
-        <div class="conv-info">
-          <div class="conv-name">${peerName}</div>
-          <div class="conv-preview">${preview}</div>
-        </div>
-        <div class="conv-time">${timeStr}</div>
-      </div>`;
+  let lastDate='';
+  box.innerHTML=msgs.map(m=>{
+    renderedMsgIds.add(m.id); // 记录已渲染
+    const mine=m.sender_id===currentUser.id;
+    const d=new Date(m.created_at);
+    const ds=d.toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'});
+    const ts=d.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+    let sep='';
+    if(ds!==lastDate){lastDate=ds;sep=`<div class="chat-date-sep">${ds}</div>`;}
+    return`${sep}<div class="bubble-wrap ${mine?'mine':'theirs'}"><div class="bubble ${mine?'mine':'theirs'}">${esc(m.content)}</div><div class="bubble-time">${ts}</div></div>`;
   }).join('');
+  box.scrollTop=box.scrollHeight;
 }
 
-// 从帖子「消息」按钮触发 → 找或创建会话
-window.startConversation = async function(postAuthorUid, postAuthorName, postAuthorAv) {
-  if (!currentUser) { showToast('请先登录再发消息'); return; }
-  if (postAuthorUid === currentUser.id) { showToast('不能给自己发消息'); return; }
-
-  // upsert 会话（user_a 取较小的 uuid 保证唯一）
-  const [uA, uB] = [currentUser.id, postAuthorUid].sort();
-  const { data: existing } = await sb.from('conversations')
-    .select('id').eq('user_a', uA).eq('user_b', uB).single();
-
-  let convId = existing?.id;
-  if (!convId) {
-    const { data: newConv, error } = await sb.from('conversations')
-      .insert({ user_a: uA, user_b: uB }).select('id').single();
-    if (error) { showToast('创建会话失败'); return; }
-    convId = newConv.id;
-  }
-
-  // 跳到消息页并打开聊天
-  const dmBtn = document.querySelector('.nav-item:nth-child(3)');
-  window.switchPage('dm', dmBtn);
-  window.openChat(convId, postAuthorUid, postAuthorName, postAuthorAv);
-};
-
-// 打开聊天视图
-window.openChat = async function(convId, peerId, peerName, peerAv) {
-  currentConvId = convId;
-  document.getElementById('chatPeerName').textContent = peerName;
-  document.getElementById('chatPeerSub').textContent  = '';
-  const peerAvEl = document.getElementById('chatPeerAv');
-  if (peerAv && peerAv.startsWith('http')) {
-    peerAvEl.innerHTML = `<img src="${peerAv}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
-  } else {
-    peerAvEl.textContent = peerAv || '🌸';
-  }
-  document.getElementById('msgChatView').classList.add('open');
-
-  await loadMessages(convId);
-  subscribeMessages(convId);
-};
-
-window.closeChat = function() {
-  document.getElementById('msgChatView').classList.remove('open');
-  if (msgChannel) { sb.removeChannel(msgChannel); msgChannel = null; }
-  currentConvId = null;
-};
-
-// 加载消息历史
-async function loadMessages(convId) {
-  const { data, error } = await sb.from('messages')
-    .select('*, sender:profiles!messages_sender_id_fkey(username,avatar_url)')
-    .eq('conversation_id', convId)
-    .order('created_at', { ascending: true });
-
-  if (error) { showToast('加载消息失败'); return; }
-  renderBubbles(data || []);
+function subMessages(convId){
+  if(msgSub)msgSub.unsubscribe();
+  msgSub=sb.channel('msg-'+convId)
+    .on('postgres_changes',{
+      event:'INSERT', schema:'public', table:'messages'
+      // 不加 filter，前端判断，避免免费版 filter 限制
+    },p=>{
+      const msg=p.new;
+      // 只处理当前会话 & 未渲染过的消息
+      if(msg.conversation_id!==activeChatConvId)return;
+      if(renderedMsgIds.has(msg.id))return;
+      renderedMsgIds.add(msg.id);
+      appendMsg(msg);
+    })
+    .subscribe((status)=>{
+      console.log('[Realtime]',status);
+    });
 }
 
-// 渲染气泡
-function renderBubbles(msgs) {
-  const container = document.getElementById('msgBubbles');
-  if (!msgs.length) {
-    container.innerHTML = '<div style="text-align:center;color:var(--gray-5);font-size:13px;padding:24px 0;font-weight:300;">发送第一条消息吧 🤍</div>';
+function appendMsg(msg){
+  const box=document.getElementById('chatMessages');
+  const hint=box.querySelector('.chat-hint');if(hint)hint.remove();
+  const mine=msg.sender_id===currentUser.id;
+  const d=new Date(msg.created_at);
+  const ts=d.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+  // 检查是否需要加日期分隔
+  const ds=d.toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'});
+  const lastSep=box.querySelector('.chat-date-sep:last-of-type');
+  if(!lastSep||lastSep.textContent!==ds){
+    const sep=document.createElement('div');
+    sep.className='chat-date-sep';sep.textContent=ds;
+    box.appendChild(sep);
+  }
+  const wrap=document.createElement('div');
+  wrap.className=`bubble-wrap ${mine?'mine':'theirs'}`;
+  wrap.innerHTML=`<div class="bubble ${mine?'mine':'theirs'}">${esc(msg.content)}</div><div class="bubble-time">${ts}</div>`;
+  box.appendChild(wrap);
+  box.scrollTop=box.scrollHeight;
+}
+
+window.sendMessage=async function(){
+  const input=document.getElementById('chatInput');
+  const text=input.value.trim();
+  if(!text||!activeChatConvId)return;
+  input.value='';input.style.height='auto';
+  const{error}=await sb.from('messages').insert({conversation_id:activeChatConvId,sender_id:currentUser.id,content:text});
+  if(error){showToast('发送失败');return;}
+  await sb.from('conversations').update({last_message:text,last_at:new Date().toISOString()}).eq('id',activeChatConvId);
+};
+
+async function renderConvList(){
+  const container=document.getElementById('convList');
+  if(!currentUser){
+    container.innerHTML=`<div class="dm-empty"><div class="big">💬</div><h3>登录后查看消息</h3><p>登录后与搭子私聊 🤍</p><button class="go-btn" onclick="window.goToLogin()" style="margin-top:4px">去登录 →</button></div>`;
     return;
   }
-
-  let lastDate = '';
-  container.innerHTML = msgs.map(m => {
-    const mine    = m.sender_id === currentUser.id;
-    const av      = m.sender?.avatar_url || '🌸';
-    const name    = m.sender?.username   || '搭子';
-    const timeStr = new Date(m.created_at).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
-    const dateStr = new Date(m.created_at).toLocaleDateString('zh-CN');
-    let sep = '';
-    if (dateStr !== lastDate) { sep = `<div class="bubble-date-sep">${dateStr}</div>`; lastDate = dateStr; }
-    const avHtml  = av.startsWith('http')
-      ? `<img src="${av}" style="width:100%;height:100%;object-fit:cover">`
-      : av;
-    const timeEl  = `<div class="bubble-time">${timeStr}</div>`;
-    return `${sep}
-    <div class="bubble-wrap ${mine?'mine':''}">
-      ${!mine ? `<div class="bubble-av">${avHtml}</div>` : ''}
-      ${mine ? timeEl : ''}
-      <div class="bubble ${mine?'mine':'theirs'}">${escHtml(m.content)}</div>
-      ${!mine ? timeEl : ''}
-      ${mine ? `<div class="bubble-av">${avHtml}</div>` : ''}
+  container.innerHTML='<div class="chat-hint">加载中…</div>';
+  const{data:convs,error}=await sb.from('conversations').select('*').or(`user_a.eq.${currentUser.id},user_b.eq.${currentUser.id}`).order('last_at',{ascending:false});
+  if(error||!convs?.length){
+    container.innerHTML=`<div class="dm-empty"><div class="big">💬</div><h3>还没有消息</h3><p>在发现页找到感兴趣的行程<br>点「消息」开始聊天吧 🤍</p></div>`;
+    return;
+  }
+  const peerIds=convs.map(c=>c.user_a===currentUser.id?c.user_b:c.user_a);
+  const{data:profs}=await sb.from('profiles').select('id,username,avatar_url').in('id',peerIds);
+  const pm=Object.fromEntries((profs||[]).map(p=>[p.id,p]));
+  container.innerHTML=convs.map(c=>{
+    const pid=c.user_a===currentUser.id?c.user_b:c.user_a;
+    const peer=pm[pid]||{};
+    const pname=peer.username||'搭子';
+    const pav=peer.avatar_url||'🌸';
+    const avH=(pav.startsWith('http')||pav.startsWith('/'))?`<img src="${pav}" alt="av">`:pav;
+    const tstr=c.last_at?new Date(c.last_at).toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'}):'';
+    return`<div class="conv-item" onclick="window.openChatById('${c.id}','${pid}','${pname}','${pav}')">
+      <div class="conv-avatar">${avH}</div>
+      <div class="conv-info"><div class="conv-name">${pname}</div><div class="conv-preview">${c.last_message||'开始聊天吧…'}</div></div>
+      <div class="conv-time">${tstr}</div>
     </div>`;
   }).join('');
-
-  container.scrollTop = container.scrollHeight;
+  subConvs();
 }
 
-function escHtml(s) {
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+window.openChatById=function(convId,peerId,peerName,peerAv){openChatPanel(convId,peerId,peerName,peerAv);};
+
+function subConvs(){
+  if(convSub)convSub.unsubscribe();
+  convSub=sb.channel('convs-'+currentUser.id)
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'conversations'},()=>{
+      if(!document.getElementById('chatPanel').classList.contains('open')){
+        renderConvList();
+        document.getElementById('dmBadge').classList.add('show');
+      }
+    }).subscribe();
 }
 
-// Realtime 订阅
-function subscribeMessages(convId) {
-  if (msgChannel) sb.removeChannel(msgChannel);
-  msgChannel = sb.channel('messages:' + convId)
-    .on('postgres_changes', {
-      event: 'INSERT', schema: 'public', table: 'messages',
-      filter: `conversation_id=eq.${convId}`
-    }, async (payload) => {
-      // 拿 sender profile
-      const { data: prof } = await sb.from('profiles')
-        .select('username,avatar_url').eq('id', payload.new.sender_id).single();
-      appendBubble({ ...payload.new, sender: prof });
-    })
-    .subscribe();
-}
+// ── discover ──
+let drawerOpen=true;
+window.toggleDrawer=function(){drawerOpen=!drawerOpen;document.getElementById('filterDrawer').classList.toggle('open',drawerOpen);document.getElementById('drawerBtn').textContent=drawerOpen?'筛选 ⌃':'筛选 ⌄';};
+let activeType='',activeCity='';
+window.selectType=function(btn){document.querySelectorAll('.type-chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');activeType=btn.dataset.type;loadPosts();};
+window.selectCity=function(btn){document.querySelectorAll('.city-chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');activeCity=btn.dataset.city;document.getElementById('f-city').value=activeCity;loadPosts();};
+window.onCityInput=function(){document.querySelectorAll('.city-chip').forEach(c=>c.classList.remove('on'));activeCity=document.getElementById('f-city').value;loadPosts();};
+window.filterCards=loadPosts;
+function setLoading(on){document.getElementById('cardList').style.opacity=on?'.4':'1';if(on)document.getElementById('resultCount').textContent='加载中…';}
 
-function appendBubble(m) {
-  const container = document.getElementById('msgBubbles');
-  // 移除"发送第一条"提示
-  const hint = container.querySelector('div[style*="发送第一条"]');
-  if (hint) hint.remove();
-
-  const mine    = m.sender_id === currentUser.id;
-  const av      = m.sender?.avatar_url || '🌸';
-  const timeStr = new Date(m.created_at).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
-  const avHtml  = av.startsWith('http')
-    ? `<img src="${av}" style="width:100%;height:100%;object-fit:cover">`
-    : av;
-  const timeEl  = `<div class="bubble-time">${timeStr}</div>`;
-  const wrap    = document.createElement('div');
-  wrap.className = `bubble-wrap ${mine?'mine':''}`;
-  wrap.innerHTML = `
-    ${!mine ? `<div class="bubble-av">${avHtml}</div>` : ''}
-    ${mine ? timeEl : ''}
-    <div class="bubble ${mine?'mine':'theirs'}">${escHtml(m.content)}</div>
-    ${!mine ? timeEl : ''}
-    ${mine ? `<div class="bubble-av">${avHtml}</div>` : ''}`;
-  container.appendChild(wrap);
-  container.scrollTop = container.scrollHeight;
-
-  // 消息角标
-  if (!mine) document.getElementById('msgBadge').classList.add('show');
-}
-
-window.sendMessage = async function() {
-  if (!currentUser || !currentConvId) return;
-  const input   = document.getElementById('msgInput');
-  const content = input.value.trim();
-  if (!content) return;
-  input.value = ''; input.style.height = 'auto';
-
-  const { error } = await sb.from('messages').insert({
-    conversation_id: currentConvId,
-    sender_id:       currentUser.id,
-    content
-  });
-  if (error) { showToast('发送失败'); return; }
-
-  // 更新会话 last_message
-  await sb.from('conversations').update({ last_message: content, last_at: new Date().toISOString() })
-    .eq('id', currentConvId);
-};
-
-// ── Filter ──
-let drawerOpen = true;
-window.toggleDrawer = function() {
-  drawerOpen = !drawerOpen;
-  document.getElementById('filterDrawer').classList.toggle('open', drawerOpen);
-  document.getElementById('drawerBtn').textContent = drawerOpen ? '筛选 ⌃' : '筛选 ⌄';
-};
-let activeType = '', activeCity = '';
-window.selectType = function(btn) {
-  document.querySelectorAll('.type-chip').forEach(c => c.classList.remove('on'));
-  btn.classList.add('on'); activeType = btn.dataset.type; loadPosts();
-};
-window.selectCity = function(btn) {
-  document.querySelectorAll('.city-chip').forEach(c => c.classList.remove('on'));
-  btn.classList.add('on'); activeCity = btn.dataset.city;
-  document.getElementById('f-city').value = activeCity; loadPosts();
-};
-window.onCityInput = function() {
-  document.querySelectorAll('.city-chip').forEach(c => c.classList.remove('on'));
-  activeCity = document.getElementById('f-city').value; loadPosts();
-};
-window.filterCards = loadPosts;
-
-function setLoading(on) {
-  document.getElementById('cardList').style.opacity = on ? '.4' : '1';
-  if (on) document.getElementById('resultCount').textContent = '加载中…';
-}
-
-// ── 加载帖子 ──
-async function loadPosts() {
+async function loadPosts(){
   setLoading(true);
-  try {
-    let query = sb.from('posts').select('*').order('created_at', { ascending: false });
-    const cityQ     = (document.getElementById('f-city').value || activeCity).trim();
-    const gender    = document.getElementById('f-gender').value;
-    const idol      = document.getElementById('f-idol').value.trim();
-    const num       = document.getElementById('f-num').value;
-    const budgetMax = parseInt(document.getElementById('f-budget').value) || null;
-    const q         = document.getElementById('searchInput').value.trim();
-    if (activeType) query = query.eq('type', activeType);
-    if (cityQ)      query = query.ilike('city', `%${cityQ}%`);
-    if (gender)     query = query.eq('gender', gender);
-    if (idol)       query = query.ilike('idol', `%${idol}%`);
-    if (num)        query = query.eq('num', num);
-    const { data, error } = await query;
-    if (error) throw error;
-    let posts = data || [];
-    if (q) {
-      const lq = q.toLowerCase();
-      posts = posts.filter(p =>
-        [p.city,p.event,p.idol,p.about,p.style,p.type].some(v => v&&v.toLowerCase().includes(lq))
-      );
-    }
-    if (budgetMax) {
-      posts = posts.filter(p => {
-        const nums = (p.budget||'').match(/\d+/g);
-        if (!nums) return true;
-        return Math.max(...nums.map(Number)) <= budgetMax;
-      });
-    }
+  try{
+    let q=sb.from('posts').select('*').order('created_at',{ascending:false});
+    const cityQ=(document.getElementById('f-city').value||activeCity).trim();
+    const gender=document.getElementById('f-gender').value;
+    const idol=document.getElementById('f-idol').value.trim();
+    const num=document.getElementById('f-num').value;
+    const bmax=parseInt(document.getElementById('f-budget').value)||null;
+    const sq=document.getElementById('searchInput').value.trim();
+    if(activeType)q=q.eq('type',activeType);
+    if(cityQ)q=q.ilike('city',`%${cityQ}%`);
+    if(gender)q=q.eq('gender',gender);
+    if(idol)q=q.ilike('idol',`%${idol}%`);
+    if(num)q=q.eq('num',num);
+    const{data,error}=await q;if(error)throw error;
+    let posts=data||[];
+    if(sq){const lq=sq.toLowerCase();posts=posts.filter(p=>[p.city,p.event,p.idol,p.about,p.style,p.type].some(v=>v&&v.toLowerCase().includes(lq)));}
+    if(bmax){posts=posts.filter(p=>{const ns=(p.budget||'').match(/\d+/g);if(!ns)return true;return Math.max(...ns.map(Number))<=bmax;});}
     renderCards(posts);
-  } catch(e) {
-    console.error(e); showToast('加载失败，请检查网络');
-    document.getElementById('resultCount').textContent = '加载失败';
-  } finally { setLoading(false); }
+  }catch(e){console.error(e);showToast('加载失败，请检查网络');document.getElementById('resultCount').textContent='加载失败';}
+  finally{setLoading(false);}
 }
 
-// ── 渲染卡片 ──
-function renderCards(posts) {
-  const list = document.getElementById('cardList');
-  document.getElementById('resultCount').textContent = `共 ${posts.length} 条行程`;
-  if (!posts.length) {
-    list.innerHTML = '<div style="padding:40px 0;text-align:center;color:var(--gray-5);font-size:13px;font-weight:300;">暂无符合条件的行程～</div>';
-    return;
-  }
-  list.innerHTML = posts.map(p => {
-    const dateStr  = p.date ? p.date.replace(/-/g,'.') : '';
-    const tags     = Array.isArray(p.tags) ? p.tags : [];
-    const av       = p.avatar_url || '🌸';
-    const avHtml   = av.startsWith('http')
-      ? `<img src="${av}" style="width:100%;height:100%;object-fit:cover">`
-      : av;
-    // 消息按钮：已登录且不是自己的帖子才显示真实功能
-    const isMine   = currentUser && p.author_uid === currentUser.id;
-    const msgBtn   = p.allow_message !== false && !isMine
-      ? `<button class="dm-btn" onclick="window.startConversation('${p.author_uid}','${(p.author_name||'搭子').replace(/'/g,"\\'")}','${av}')">消息</button>`
-      : isMine ? '<span style="font-size:12px;color:var(--gray-5)">我的发布</span>'
-               : '<span style="font-size:12px;color:var(--gray-5)">不接受消息</span>';
-    return `
-    <div class="card">
-      <div class="card-top">
-        <span class="card-location">📍 ${p.city||''}</span>
-        <span class="card-date">${dateStr}</span>
-      </div>
+function renderCards(posts){
+  const list=document.getElementById('cardList');
+  document.getElementById('resultCount').textContent=`共 ${posts.length} 条行程`;
+  if(!posts.length){list.innerHTML='<div style="padding:40px 0;text-align:center;color:var(--gray-5);font-size:13px;font-weight:300;">暂无符合条件的行程～</div>';return;}
+  list.innerHTML=posts.map(p=>{
+    const ds=p.date?p.date.replace(/-/g,'.'):'';
+    const tags=Array.isArray(p.tags)?p.tags:[];
+    const av=p.avatar_url||'🌸';
+    const avH=(av.startsWith('http')||av.startsWith('/'))?`<img src="${av}" alt="av">`:av;
+    const isMine=currentUser&&p.author_uid===currentUser.id;
+    const canMsg=p.allow_message!==false&&p.author_uid&&!isMine;
+    const safeN=(p.author_name||'搭子').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+    const safeAv=av.replace(/'/g,"\\'");
+    const msgBtn=canMsg
+      ?`<button class="dm-btn" onclick="window.startChat('${p.author_uid}','${safeN}','${safeAv}','${p.id}')">消息</button>`
+      :isMine?'<span style="font-size:12px;color:var(--gray-5)">我发布的</span>'
+              :'<span style="font-size:12px;color:var(--gray-5)">不接受消息</span>';
+    return`<div class="card">
+      <div class="card-top"><span class="card-location">📍 ${p.city||''}</span><span class="card-date">${ds}</span></div>
       <div class="card-event">${p.event||''}</div>
       ${p.idol?`<div class="card-idol">본명 · ${p.idol}</div>`:''}
       <div class="tag-row">
@@ -1098,118 +825,78 @@ function renderCards(posts) {
         ${p.num?`<span class="tag tag-outline">找 ${p.num}</span>`:''}
         ${p.budget?`<span class="tag tag-outline">${p.budget}</span>`:''}
       </div>
-      ${p.about?`
-      <div class="person-block">
-        <div class="person-block-header">
-          <div class="avatar-sm">${avHtml}</div>
-          <span class="person-name">${p.author_name||'匿名搭子'}</span>
-          <span class="person-city">${p.style||''}</span>
-        </div>
-        <div class="person-desc">${p.about}</div>
-      </div>`:''}
+      ${p.about?`<div class="person-block"><div class="person-block-header"><div class="avatar-sm">${avH}</div><span class="person-name">${p.author_name||'匿名搭子'}</span><span class="person-city">${p.style||''}</span></div><div class="person-desc">${p.about}</div></div>`:''}
       ${tags.length?`<div class="tag-row">${tags.map(t=>`<span class="tag tag-outline">${t}</span>`).join('')}</div>`:''}
-      <div class="card-footer">
-        <div class="card-stats">
-          <div class="card-stat">👥 ${p.num||'–'}</div>
-          <div class="card-stat">${dateStr}</div>
-        </div>
-        ${msgBtn}
-      </div>
+      <div class="card-footer"><div class="card-stats"><div class="card-stat">👥 ${p.num||'–'}</div><div class="card-stat">${ds}</div></div>${msgBtn}</div>
     </div>`;
   }).join('');
 }
 
-window.toggleChip = function(el) { el.classList.toggle('sel'); };
+window.toggleChip=function(el){el.classList.toggle('sel');};
 
 // ── 发布 ──
-window.submitPost = async function() {
-  if (!currentUser) { showToast('请先登录'); return; }
-  const city  = document.getElementById('pub-city').value.trim();
-  const event = document.getElementById('pub-event').value.trim();
-  const about = document.getElementById('pub-about').value.trim();
-  const idol  = document.getElementById('pub-idol').value.trim();
-  if (!city||!event||!about||!idol) { showToast('请填写必填项 *'); return; }
-  const btn = document.getElementById('submitBtn');
-  btn.textContent = '发布中…'; btn.disabled = true;
-  const typeChips = [...document.querySelectorAll('#pub-type-chips .ms-chip.sel')].map(c=>c.textContent.trim());
-  const tripTags  = [...document.querySelectorAll('#pub-trip-tags .ms-chip.sel')].map(c=>c.textContent.trim());
-  const { data: prof } = await sb.from('profiles').select('username,avatar_url').eq('id',currentUser.id).single();
-  const payload = {
-    city, event, about, idol,
-    date: document.getElementById('pub-date').value || null,
-    type: typeChips[0] || null,
-    num:  document.getElementById('pub-num').value,
-    gender: document.getElementById('pub-gender').value,
-    budget: document.getElementById('pub-budget').value.trim() || null,
-    style:  document.getElementById('pub-style').value.trim() || null,
-    tags: tripTags,
-    description: document.getElementById('pub-desc').value.trim() || null,
-    allow_message: document.getElementById('pub-dm').checked,
-    author_uid:  currentUser.id,
-    author_name: prof?.username  || null,
-    avatar_url:  prof?.avatar_url || '🌸',
-  };
-  const { error } = await sb.from('posts').insert(payload);
-  btn.textContent = '发布行程'; btn.disabled = false;
-  if (error) { showToast('发布失败：'+(error.message||'请重试')); return; }
-  ['pub-city','pub-date','pub-event','pub-budget','pub-idol','pub-style','pub-about','pub-desc'].forEach(id=>{
-    document.getElementById(id).value='';
+window.submitPost=async function(){
+  if(!currentUser){showToast('请先登录');return;}
+  const city=document.getElementById('pub-city').value.trim();
+  const event=document.getElementById('pub-event').value.trim();
+  const about=document.getElementById('pub-about').value.trim();
+  const idol=document.getElementById('pub-idol').value.trim();
+  if(!city||!event||!about||!idol){showToast('请填写必填项 *');return;}
+  const btn=document.getElementById('submitBtn');btn.textContent='发布中…';btn.disabled=true;
+  const tc=[...document.querySelectorAll('#pub-type-chips .ms-chip.sel')].map(c=>c.textContent.trim());
+  const tt=[...document.querySelectorAll('#pub-trip-tags .ms-chip.sel')].map(c=>c.textContent.trim());
+  const{data:prof}=await sb.from('profiles').select('username,avatar_url').eq('id',currentUser.id).single();
+  const{error}=await sb.from('posts').insert({
+    city,event,about,idol,
+    date:document.getElementById('pub-date').value||null,
+    type:tc[0]||null,
+    num:document.getElementById('pub-num').value,
+    gender:document.getElementById('pub-gender').value,
+    budget:document.getElementById('pub-budget').value.trim()||null,
+    style:document.getElementById('pub-style').value.trim()||null,
+    tags:tt,
+    description:document.getElementById('pub-desc').value.trim()||null,
+    allow_message:document.getElementById('pub-dm').checked,
+    author_uid:currentUser.id,
+    author_name:prof?.username||null,
+    avatar_url:prof?.avatar_url||'🌸',
   });
+  btn.textContent='发布行程';btn.disabled=false;
+  if(error){showToast('发布失败：'+(error.message||'请重试'));return;}
+  ['pub-city','pub-date','pub-event','pub-budget','pub-idol','pub-style','pub-about','pub-desc'].forEach(id=>{document.getElementById(id).value='';});
   document.querySelectorAll('#page-publish .ms-chip.sel').forEach(c=>c.classList.remove('sel'));
-  document.getElementById('pub-dm').checked = true;
+  document.getElementById('pub-dm').checked=true;
   showToast('发布成功！已上线 ✓');
-  const myBtn = document.querySelector('.nav-item:nth-child(4)');
-  window.switchPage('my', myBtn);
+  window.switchPage('my',document.querySelector('.nav-item:nth-child(4)'));
 };
 
 // ── 我的发布 ──
-async function renderMyPosts() {
-  const container = document.getElementById('myPostsList');
-  container.innerHTML = '<div style="padding:16px 0;text-align:center;color:var(--gray-5);font-size:13px;">加载中…</div>';
-  const { data, error } = await sb.from('posts').select('*').eq('author_uid',currentUser.id).order('created_at',{ascending:false});
-  if (error||!data?.length) {
-    container.innerHTML = '<div style="padding:20px 0;text-align:center;color:var(--gray-5);font-size:13px;font-weight:300;">还没有发布过行程～</div>';
-    return;
-  }
-  container.innerHTML = data.map(p=>`
-    <div class="my-post">
-      <div style="flex:1;min-width:0">
-        <div class="my-post-title">${p.event||'未命名活动'}</div>
-        <div class="my-post-meta">${p.date?p.date.replace(/-/g,'.'):''}${p.city?' · '+p.city:''} · 招募 ${p.num||'–'}</div>
-        ${p.idol?`<div style="margin-top:5px;font-size:11.5px;color:var(--gray-5)">本命：${p.idol}</div>`:''}
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0">
-        <div class="dot on"></div>
-        <button onclick="window.deletePost('${p.id}')" style="font-size:11px;color:var(--gray-5);background:none;border:none;cursor:pointer;padding:2px 0;">删除</button>
-      </div>
-    </div>
-  `).join('');
+async function renderMyPosts(){
+  const c=document.getElementById('myPostsList');
+  c.innerHTML='<div style="padding:16px 0;text-align:center;color:var(--gray-5);font-size:13px;">加载中…</div>';
+  const{data,error}=await sb.from('posts').select('*').eq('author_uid',currentUser.id).order('created_at',{ascending:false});
+  if(error||!data?.length){c.innerHTML='<div style="padding:20px 0;text-align:center;color:var(--gray-5);font-size:13px;font-weight:300;">还没有发布过行程～</div>';return;}
+  c.innerHTML=data.map(p=>`<div class="my-post"><div style="flex:1;min-width:0"><div class="my-post-title">${p.event||'未命名活动'}</div><div class="my-post-meta">${p.date?p.date.replace(/-/g,'.'):''}${p.city?' · '+p.city:''} · 招募 ${p.num||'–'}</div>${p.idol?`<div style="margin-top:5px;font-size:11.5px;color:var(--gray-5)">本命：${p.idol}</div>`:''}</div><div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0"><div class="dot on"></div><button onclick="window.deletePost('${p.id}')" style="font-size:11px;color:var(--gray-5);background:none;border:none;cursor:pointer;padding:2px 0;">删除</button></div></div>`).join('');
 }
-window.deletePost = async function(id) {
-  const { error } = await sb.from('posts').delete().eq('id',id).eq('author_uid',currentUser.id);
-  if (error) { showToast('删除失败'); return; }
-  showToast('已删除'); renderMyPosts();
+window.deletePost=async function(id){
+  const{error}=await sb.from('posts').delete().eq('id',id).eq('author_uid',currentUser.id);
+  if(error){showToast('删除失败');return;}
+  showToast('已删除');renderMyPosts();
 };
 
-// ── Auth 监听 ──
-sb.auth.onAuthStateChange(async (_event, session) => {
-  currentUser = session?.user || null;
-  renderAuthState();
-  renderPublishPage();
-  if (currentUser && document.getElementById('page-my').classList.contains('active')) {
-    await loadProfile(); renderMyPosts();
-  }
-  if (currentUser && document.getElementById('page-dm').classList.contains('active')) {
-    renderMsgPage();
-  }
+// ── auth listener ──
+sb.auth.onAuthStateChange(async(_,session)=>{
+  currentUser=session?.user||null;
+  renderAuthState();renderPublishPage();
+  if(currentUser&&document.getElementById('page-my').classList.contains('active')){await loadProfile();renderMyPosts();}
+  if(currentUser&&document.getElementById('page-dm').classList.contains('active'))renderConvList();
 });
 
-// ── 初始化 ──
-(async () => {
-  const { data: { session } } = await sb.auth.getSession();
-  currentUser = session?.user || null;
-  renderAuthState();
-  renderPublishPage();
+// ── init ──
+(async()=>{
+  const{data:{session}}=await sb.auth.getSession();
+  currentUser=session?.user||null;
+  renderAuthState();renderPublishPage();
   loadPosts();
 })();
 </script>
