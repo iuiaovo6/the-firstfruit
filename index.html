@@ -191,31 +191,38 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
 /* toast */
 .toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--black);color:var(--white);padding:11px 22px;border-radius:999px;font-size:13px;font-family:'Noto Sans SC',sans-serif;font-weight:300;opacity:0;pointer-events:none;transition:all .28s ease;z-index:999;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-/* post detail modal */
-.post-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease;}
-.post-modal-overlay.open{opacity:1;pointer-events:all;}
-.post-modal-sheet{width:100%;max-width:430px;background:var(--white);border-radius:22px 22px 0 0;transform:translateY(60px);transition:transform .3s ease;max-height:88dvh;display:flex;flex-direction:column;overflow:hidden;}
-.post-modal-overlay.open .post-modal-sheet{transform:translateY(0);}
-.post-modal-handle{width:36px;height:4px;background:var(--gray-3);border-radius:2px;margin:14px auto 0;flex-shrink:0;}
-.post-modal-scroll{flex:1;overflow-y:auto;scrollbar-width:none;padding:18px 22px 0;}
-.post-modal-scroll::-webkit-scrollbar{display:none;}
-.post-modal-event{font-size:20px;font-weight:500;letter-spacing:-.4px;line-height:1.3;margin-bottom:6px;}
-.post-modal-meta{font-size:13px;color:var(--gray-5);font-weight:300;margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;}
-.post-modal-divider{height:1px;background:var(--gray-1);margin:16px 0;}
-.post-modal-section-label{font-size:11px;color:var(--gray-5);letter-spacing:.5px;text-transform:uppercase;font-weight:400;margin-bottom:8px;}
-.post-modal-author{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
-.post-modal-av{width:44px;height:44px;border-radius:50%;background:var(--gray-1);border:1.5px solid var(--gray-3);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0;}
-.post-modal-av img{width:100%;height:100%;object-fit:cover;}
-.post-modal-author-name{font-size:15px;font-weight:500;margin-bottom:2px;}
-.post-modal-author-sub{font-size:12.5px;color:var(--gray-5);font-weight:300;}
-.post-modal-body-text{font-size:14px;color:var(--gray-7);line-height:1.75;font-weight:300;white-space:pre-wrap;word-break:break-word;}
-.post-modal-footer{padding:14px 22px 28px;display:flex;gap:10px;border-top:1px solid var(--gray-1);flex-shrink:0;background:var(--white);}
-.post-modal-close-btn{flex:1;padding:13px;border:1.5px solid var(--gray-3);border-radius:var(--radius);font-size:14px;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--gray-7);background:none;cursor:pointer;transition:all .2s;}
-.post-modal-close-btn:hover{border-color:var(--black);color:var(--black);}
-.post-modal-msg-btn{flex:2;padding:13px;border:none;border-radius:var(--radius);font-size:14px;font-family:'Noto Sans SC',sans-serif;font-weight:400;color:var(--white);background:var(--black);cursor:pointer;transition:opacity .2s;}
-.post-modal-msg-btn:hover{opacity:.78;}
-/* card expand hint */
-.card-expand-hint{font-size:11.5px;color:var(--gray-5);font-weight:300;padding-top:8px;text-align:right;}
+/* confirm dialog */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:300;display:flex;align-items:center;justify-content:center;padding:0 32px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.confirm-overlay.open{opacity:1;pointer-events:all;}
+.confirm-box{width:100%;max-width:320px;background:var(--white);border-radius:18px;padding:24px 22px 18px;text-align:center;transform:scale(.95);transition:transform .2s;}
+.confirm-overlay.open .confirm-box{transform:scale(1);}
+.confirm-title{font-size:16px;font-weight:500;margin-bottom:8px;color:var(--black);}
+.confirm-body{font-size:13.5px;color:var(--gray-5);font-weight:300;line-height:1.6;margin-bottom:20px;}
+.confirm-btns{display:flex;gap:10px;}
+.confirm-cancel{flex:1;padding:12px;border:1.5px solid var(--gray-3);border-radius:var(--radius-sm);font-size:14px;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--gray-7);background:none;cursor:pointer;transition:all .2s;}
+.confirm-cancel:hover{border-color:var(--black);color:var(--black);}
+.confirm-ok{flex:1;padding:12px;border:none;border-radius:var(--radius-sm);font-size:14px;font-family:'Noto Sans SC',sans-serif;font-weight:400;color:var(--white);background:#d9363e;cursor:pointer;transition:opacity .2s;}
+.confirm-ok:hover{opacity:.82;}
+/* back to top */
+.back-top{position:fixed;bottom:98px;right:calc(50% - 215px + 16px);width:38px;height:38px;border-radius:50%;background:var(--white);border:1.5px solid var(--gray-3);box-shadow:0 2px 12px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:30;}
+.back-top.show{opacity:1;pointer-events:all;}
+@media(max-width:460px){.back-top{right:16px;}}
+/* pull to refresh */
+.ptr-wrap{position:relative;}
+.ptr-indicator{display:flex;align-items:center;justify-content:center;height:0;overflow:hidden;font-size:12px;color:var(--gray-5);font-weight:300;gap:7px;transition:height .2s;background:var(--white);}
+.ptr-indicator.visible{height:46px;}
+.ptr-spinner{width:16px;height:16px;border:2px solid var(--gray-3);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+/* offline banner */
+.offline-banner{position:fixed;top:0;left:50%;transform:translateX(-50%) translateY(-100%);width:100%;max-width:430px;background:#d9363e;color:#fff;text-align:center;font-size:13px;font-weight:400;font-family:'Noto Sans SC',sans-serif;padding:10px 16px;z-index:500;transition:transform .3s ease;}
+.offline-banner.show{transform:translateX(-50%) translateY(0);}
+/* login field error */
+.field-err{font-size:12px;color:#d9363e;margin-top:5px;font-weight:300;display:none;}
+.field-err.show{display:block;}
+/* edit post modal */
+.ep-sheet{width:100%;max-width:430px;background:var(--white);border-radius:20px 20px 0 0;padding:0 0 32px;transform:translateY(40px);transition:transform .28s ease;max-height:92dvh;overflow-y:auto;scrollbar-width:none;}
+.ep-sheet::-webkit-scrollbar{display:none;}
+.modal-overlay.open .ep-sheet{transform:translateY(0);}
 </style>
 </head>
 <body>
@@ -228,6 +235,7 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
 
     <!-- 发现 -->
     <div class="page active" id="page-discover">
+      <div class="ptr-indicator" id="ptrIndicator"><div class="ptr-spinner"></div><span id="ptrText">松开刷新</span></div>
       <div class="search-wrap"><div class="search-box"><span class="s-icon">🔍</span><input type="text" placeholder="搜索活动、城市、本命…" id="searchInput" oninput="window.filterCards()"></div></div>
       <div class="filter-scroll">
         <button class="fchip on" id="drawerBtn" onclick="window.toggleDrawer()">筛选 ⌃</button>
@@ -413,8 +421,8 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
             <button class="auth-tab" id="tabRegister" onclick="window.switchAuthTab('register')">注册</button>
           </div>
           <div id="formLogin">
-            <div class="form-group"><label class="form-label">邮箱</label><input class="fi" id="loginEmail" type="email" placeholder="your@email.com"></div>
-            <div class="form-group"><label class="form-label">密码</label><input class="fi" id="loginPassword" type="password" placeholder="请输入密码"></div>
+            <div class="form-group"><label class="form-label">邮箱</label><input class="fi" id="loginEmail" type="email" placeholder="your@email.com" oninput="document.getElementById('loginErr').classList.remove('show')"></div>
+            <div class="form-group"><label class="form-label">密码</label><input class="fi" id="loginPassword" type="password" placeholder="请输入密码" oninput="document.getElementById('loginErr').classList.remove('show')"><div class="field-err" id="loginErr"></div></div>
             <button class="auth-btn" id="loginBtn" onclick="window.doLogin()">登录</button>
             <div class="auth-switch">还没有账号？<span onclick="window.switchAuthTab('register')">立即注册</span></div>
           </div>
@@ -465,12 +473,30 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
   </div>
 </div>
 
-<!-- 帖子详情弹窗 -->
-<div class="post-modal-overlay" id="postModal" onclick="window.closePostModal(event)">
-  <div class="post-modal-sheet">
-    <div class="post-modal-handle"></div>
-    <div class="post-modal-scroll" id="postModalContent"></div>
-    <div class="post-modal-footer" id="postModalFooter"></div>
+<!-- 离线提示 -->
+<div class="offline-banner" id="offlineBanner">📡 网络已断开，请检查你的连接</div>
+
+<!-- 返回顶部 -->
+<button class="back-top" id="backTop" onclick="window.scrollDiscoverToTop()" title="返回顶部">↑</button>
+
+<!-- 删除确认弹窗 -->
+<div class="confirm-overlay" id="confirmModal">
+  <div class="confirm-box">
+    <div class="confirm-title">确认删除？</div>
+    <div class="confirm-body">删除后无法恢复，确定要删除这条行程吗？</div>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="window.closeConfirm()">取消</button>
+      <button class="confirm-ok" id="confirmOkBtn">删除</button>
+    </div>
+  </div>
+</div>
+
+<!-- 编辑帖子弹窗 -->
+<div class="modal-overlay" id="editPostModal" onclick="window.closeEditPostModal(event)">
+  <div class="ep-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">编辑行程</div>
+    <div class="modal-body" id="editPostBody"></div>
   </div>
 </div>
 
@@ -567,11 +593,21 @@ window.doRegister=async function(){
 window.doLogin=async function(){
   const email=document.getElementById('loginEmail').value.trim();
   const pw=document.getElementById('loginPassword').value;
-  if(!email||!pw){showToast('请填写邮箱和密码');return;}
+  const errEl=document.getElementById('loginErr');
+  errEl.classList.remove('show');
+  if(!email||!pw){errEl.textContent='请填写邮箱和密码';errEl.classList.add('show');return;}
   const btn=document.getElementById('loginBtn');btn.textContent='登录中…';btn.disabled=true;
   const{error}=await sb.auth.signInWithPassword({email,password:pw});
   btn.textContent='登录';btn.disabled=false;
-  if(error){showToast('登录失败：'+error.message);return;}
+  if(error){
+    const msg=error.message||'';
+    let friendly='登录失败，请重试';
+    if(msg.includes('Invalid login')||msg.includes('invalid_credentials'))friendly='邮箱或密码错误，请重新输入';
+    else if(msg.includes('Email not confirmed'))friendly='邮箱尚未验证，请查收验证邮件';
+    else if(msg.includes('Too many requests'))friendly='尝试次数过多，请稍后再试';
+    errEl.textContent=friendly;errEl.classList.add('show');
+    return;
+  }
   showToast('登录成功 ✓');
 };
 window.signOut=async function(){await sb.auth.signOut();showToast('已退出登录');};
@@ -836,9 +872,7 @@ function renderCards(posts){
   const list=document.getElementById('cardList');
   document.getElementById('resultCount').textContent=`共 ${posts.length} 条行程`;
   if(!posts.length){list.innerHTML='<div style="padding:40px 0;text-align:center;color:var(--gray-5);font-size:13px;font-weight:300;">暂无符合条件的行程～</div>';return;}
-  // store posts for modal lookup
-  window._postsCache = posts;
-  list.innerHTML=posts.map((p,idx)=>{
+  list.innerHTML=posts.map(p=>{
     const ds=p.date?p.date.replace(/-/g,'.'):'';
     const tags=Array.isArray(p.tags)?p.tags:[];
     const av=p.avatar_url||'🌸';
@@ -848,10 +882,10 @@ function renderCards(posts){
     const safeN=(p.author_name||'搭子').replace(/'/g,"\\'").replace(/"/g,'&quot;');
     const safeAv=av.replace(/'/g,"\\'");
     const msgBtn=canMsg
-      ?`<button class="dm-btn" onclick="event.stopPropagation();window.startChat('${p.author_uid}','${safeN}','${safeAv}','${p.id}')">消息</button>`
+      ?`<button class="dm-btn" onclick="window.startChat('${p.author_uid}','${safeN}','${safeAv}','${p.id}')">消息</button>`
       :isMine?'<span style="font-size:12px;color:var(--gray-5)">我发布的</span>'
               :'<span style="font-size:12px;color:var(--gray-5)">不接受消息</span>';
-    return`<div class="card" onclick="window.openPostModal(${idx})">
+    return`<div class="card">
       <div class="card-top"><span class="card-location">📍 ${p.city||''}</span><span class="card-date">${ds}</span></div>
       <div class="card-event">${p.event||''}</div>
       ${p.idol?`<div class="card-idol">본명 · ${p.idol}</div>`:''}
@@ -864,7 +898,6 @@ function renderCards(posts){
       ${p.about?`<div class="person-block"><div class="person-block-header"><div class="avatar-sm">${avH}</div><span class="person-name">${p.author_name||'匿名搭子'}</span><span class="person-city">${p.style||''}</span></div><div class="person-desc">${p.about}</div></div>`:''}
       ${tags.length?`<div class="tag-row">${tags.map(t=>`<span class="tag tag-outline">${t}</span>`).join('')}</div>`:''}
       <div class="card-footer"><div class="card-stats"><div class="card-stat">👥 ${p.num||'–'}</div><div class="card-stat">${ds}</div></div>${msgBtn}</div>
-      <div class="card-expand-hint">查看详情 ›</div>
     </div>`;
   }).join('');
 }
@@ -913,12 +946,118 @@ async function renderMyPosts(){
   c.innerHTML='<div style="padding:16px 0;text-align:center;color:var(--gray-5);font-size:13px;">加载中…</div>';
   const{data,error}=await sb.from('posts').select('*').eq('author_uid',currentUser.id).order('created_at',{ascending:false});
   if(error||!data?.length){c.innerHTML='<div style="padding:20px 0;text-align:center;color:var(--gray-5);font-size:13px;font-weight:300;">还没有发布过行程～</div>';return;}
-  c.innerHTML=data.map(p=>`<div class="my-post"><div style="flex:1;min-width:0"><div class="my-post-title">${p.event||'未命名活动'}</div><div class="my-post-meta">${p.date?p.date.replace(/-/g,'.'):''}${p.city?' · '+p.city:''} · 招募 ${p.num||'–'}</div>${p.idol?`<div style="margin-top:5px;font-size:11.5px;color:var(--gray-5)">本命：${p.idol}</div>`:''}</div><div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0"><div class="dot on"></div><button onclick="window.deletePost('${p.id}')" style="font-size:11px;color:var(--gray-5);background:none;border:none;cursor:pointer;padding:2px 0;">删除</button></div></div>`).join('');
+  window._myPostsCache=data;
+  c.innerHTML=data.map((p,idx)=>`
+    <div class="my-post">
+      <div style="flex:1;min-width:0">
+        <div class="my-post-title">${p.event||'未命名活动'}</div>
+        <div class="my-post-meta">${p.date?p.date.replace(/-/g,'.'):''}${p.city?' · '+p.city:''} · 招募 ${p.num||'–'}</div>
+        ${p.idol?`<div style="margin-top:5px;font-size:11.5px;color:var(--gray-5)">本命：${p.idol}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0">
+        <div class="dot on"></div>
+        <button onclick="window.openEditPostModal(${idx})" style="font-size:11px;color:var(--black);background:none;border:none;cursor:pointer;padding:2px 0;font-family:'Noto Sans SC',sans-serif;">编辑</button>
+        <button onclick="window.confirmDelete('${p.id}')" style="font-size:11px;color:var(--gray-5);background:none;border:none;cursor:pointer;padding:2px 0;font-family:'Noto Sans SC',sans-serif;">删除</button>
+      </div>
+    </div>
+  `).join('');
 }
-window.deletePost=async function(id){
+
+// ── 删除确认 ──
+let _pendingDeleteId=null;
+window.confirmDelete=function(id){
+  _pendingDeleteId=id;
+  document.getElementById('confirmModal').classList.add('open');
+};
+window.closeConfirm=function(){
+  _pendingDeleteId=null;
+  document.getElementById('confirmModal').classList.remove('open');
+};
+document.getElementById('confirmOkBtn').addEventListener('click',async()=>{
+  if(!_pendingDeleteId)return;
+  const id=_pendingDeleteId;
+  window.closeConfirm();
   const{error}=await sb.from('posts').delete().eq('id',id).eq('author_uid',currentUser.id);
   if(error){showToast('删除失败');return;}
   showToast('已删除');renderMyPosts();
+});
+
+// ── 编辑帖子弹窗 ──
+window.openEditPostModal=function(idx){
+  const p=window._myPostsCache?.[idx];if(!p)return;
+  const typeOpts=['演唱会','见面会','拼盘活动','机场接机','应援活动','签售会','回归活动'];
+  const tripOpts=['有票','找票','拼住宿','拼车/打车','外地来','本地带路','可接机场'];
+  const selTypes=Array.isArray(p.tags)?[]:[]; // type is single
+  document.getElementById('editPostBody').innerHTML=`
+    <input type="hidden" id="epId" value="${p.id}">
+    <div class="form-group"><label class="form-label">地区 <span class="req">*</span></label><input class="fi" id="epCity" value="${p.city||''}"></div>
+    <div class="form-group"><label class="form-label">日期</label><input class="fi" id="epDate" type="date" value="${p.date||''}"></div>
+    <div class="form-group"><label class="form-label">活动名称 <span class="req">*</span></label><input class="fi" id="epEvent" value="${p.event||''}"></div>
+    <div class="form-group"><label class="form-label">活动类型</label>
+      <div class="ms-wrap" id="epTypeChips">${typeOpts.map(t=>`<span class="ms-chip${p.type===t?' sel':''}" onclick="window.epToggleType(this)">${t}</span>`).join('')}</div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">招募人数</label>
+        <select class="fs" id="epNum">
+          ${['1 人','2 人','3 人以上'].map(o=>`<option${(p.num||'').replace(' ','')===o.replace(' ','')?' selected':''}>${o}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">性别要求</label>
+        <select class="fs" id="epGender">
+          ${['不限','仅女生','仅男生'].map(o=>`<option${p.gender===o?' selected':''}>${o}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">预算范围</label><input class="fi" id="epBudget" value="${p.budget||''}"></div>
+    <div class="form-group"><label class="form-label">本命 <span class="req">*</span></label><input class="fi" id="epIdol" value="${p.idol||''}"></div>
+    <div class="form-group"><label class="form-label">粉籍风格</label><input class="fi" id="epStyle" value="${p.style||''}"></div>
+    <div class="form-group"><label class="form-label">行程标签</label>
+      <div class="ms-wrap" id="epTripTags">${tripOpts.map(t=>`<span class="ms-chip${(Array.isArray(p.tags)&&p.tags.includes(t))?' sel':''}" onclick="window.toggleChip(this)">${t}</span>`).join('')}</div>
+    </div>
+    <div class="form-group"><label class="form-label">关于我 <span class="req">*</span></label><textarea class="ft" id="epAbout" rows="4">${p.about||''}</textarea></div>
+    <div class="form-group"><label class="form-label">活动补充描述</label><textarea class="ft" id="epDesc" rows="3">${p.description||''}</textarea></div>
+    <div class="form-group"><label class="cb-row"><input type="checkbox" id="epDm"${p.allow_message!==false?' checked':''}>允许其他人通过消息联系我</label></div>
+    <button class="submit-btn" id="epSaveBtn" onclick="window.saveEditPost()">保存修改</button>
+    <div style="height:4px"></div>
+  `;
+  document.getElementById('editPostModal').classList.add('open');
+};
+window.epToggleType=function(el){
+  // single select for type
+  document.querySelectorAll('#epTypeChips .ms-chip').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+};
+window.closeEditPostModal=function(e){
+  if(!e||e.target===document.getElementById('editPostModal'))
+    document.getElementById('editPostModal').classList.remove('open');
+};
+window.saveEditPost=async function(){
+  const id=document.getElementById('epId').value;
+  const city=document.getElementById('epCity').value.trim();
+  const event=document.getElementById('epEvent').value.trim();
+  const about=document.getElementById('epAbout').value.trim();
+  const idol=document.getElementById('epIdol').value.trim();
+  if(!city||!event||!about||!idol){showToast('请填写必填项 *');return;}
+  const btn=document.getElementById('epSaveBtn');btn.textContent='保存中…';btn.disabled=true;
+  const typeEl=document.querySelector('#epTypeChips .ms-chip.sel');
+  const tags=[...document.querySelectorAll('#epTripTags .ms-chip.sel')].map(c=>c.textContent.trim());
+  const{error}=await sb.from('posts').update({
+    city,event,about,idol,
+    date:document.getElementById('epDate').value||null,
+    type:typeEl?typeEl.textContent.trim():null,
+    num:document.getElementById('epNum').value,
+    gender:document.getElementById('epGender').value,
+    budget:document.getElementById('epBudget').value.trim()||null,
+    style:document.getElementById('epStyle').value.trim()||null,
+    tags,
+    description:document.getElementById('epDesc').value.trim()||null,
+    allow_message:document.getElementById('epDm').checked,
+  }).eq('id',id).eq('author_uid',currentUser.id);
+  btn.textContent='保存修改';btn.disabled=false;
+  if(error){showToast('保存失败：'+error.message);return;}
+  document.getElementById('editPostModal').classList.remove('open');
+  showToast('已更新 ✓');
+  renderMyPosts();
 };
 
 // ── auth listener ──
@@ -929,75 +1068,66 @@ sb.auth.onAuthStateChange(async(_,session)=>{
   if(currentUser&&document.getElementById('page-dm').classList.contains('active'))renderConvList();
 });
 
-// ── 帖子详情弹窗 ──
-window.openPostModal = function(idx) {
-  const p = window._postsCache?.[idx];
-  if (!p) return;
+// ── 返回顶部 ──
+window.scrollDiscoverToTop=function(){
+  document.getElementById('page-discover').scrollTo({top:0,behavior:'smooth'});
+};
+(function(){
+  const page=document.getElementById('page-discover');
+  const btn=document.getElementById('backTop');
+  page.addEventListener('scroll',()=>{
+    btn.classList.toggle('show',page.scrollTop>300);
+  },{passive:true});
+})();
 
-  const ds   = p.date ? p.date.replace(/-/g, '.') : '';
-  const av   = p.avatar_url || '🌸';
-  const avH  = (av.startsWith('http') || av.startsWith('/')) ? `<img src="${av}" alt="av">` : av;
-  const tags = Array.isArray(p.tags) ? p.tags : [];
-  const isMine  = currentUser && p.author_uid === currentUser.id;
-  const canMsg  = p.allow_message !== false && p.author_uid && !isMine;
-  const safeN   = (p.author_name || '搭子').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-  const safeAv  = av.replace(/'/g, "\\'");
+// ── 下拉刷新 ──
+(function(){
+  const page=document.getElementById('page-discover');
+  const ind=document.getElementById('ptrIndicator');
+  const txt=document.getElementById('ptrText');
+  let startY=0,pulling=false,triggered=false;
+  const THRESHOLD=72;
 
-  document.getElementById('postModalContent').innerHTML = `
-    <div class="post-modal-event">${p.event || ''}</div>
-    <div class="post-modal-meta">
-      ${p.city ? `<span>📍 ${p.city}</span>` : ''}
-      ${ds     ? `<span>🗓 ${ds}</span>`     : ''}
-      ${p.type ? `<span>🎤 ${p.type}</span>` : ''}
-    </div>
-    <div class="tag-row" style="margin-bottom:14px">
-      ${p.gender ? `<span class="tag tag-dark">${p.gender}</span>`         : ''}
-      ${p.num    ? `<span class="tag tag-outline">找 ${p.num}</span>`       : ''}
-      ${p.budget ? `<span class="tag tag-outline">${p.budget}</span>`       : ''}
-      ${tags.map(t => `<span class="tag tag-outline">${t}</span>`).join('')}
-    </div>
+  page.addEventListener('touchstart',e=>{
+    if(page.scrollTop===0)startY=e.touches[0].clientY;
+  },{passive:true});
 
-    ${p.idol ? `<div class="post-modal-divider"></div>
-    <div class="post-modal-section-label">本命</div>
-    <div style="font-size:14px;color:var(--gray-7);font-weight:300;margin-bottom:4px">${p.idol}</div>` : ''}
-
-    <div class="post-modal-divider"></div>
-    <div class="post-modal-section-label">发起人</div>
-    <div class="post-modal-author">
-      <div class="post-modal-av">${avH}</div>
-      <div>
-        <div class="post-modal-author-name">${p.author_name || '匿名搭子'}</div>
-        ${p.style ? `<div class="post-modal-author-sub">${p.style}</div>` : ''}
-      </div>
-    </div>
-
-    ${p.about ? `<div class="post-modal-section-label">关于我</div>
-    <div class="post-modal-body-text" style="margin-bottom:16px">${esc(p.about)}</div>` : ''}
-
-    ${p.description ? `<div class="post-modal-divider"></div>
-    <div class="post-modal-section-label">活动补充描述</div>
-    <div class="post-modal-body-text" style="margin-bottom:16px">${esc(p.description)}</div>` : ''}
-    <div style="height:4px"></div>
-  `;
-
-  document.getElementById('postModalFooter').innerHTML = `
-    <button class="post-modal-close-btn" onclick="window.closePostModal()">关闭</button>
-    ${canMsg
-      ? `<button class="post-modal-msg-btn" onclick="window.closePostModal();window.startChat('${p.author_uid}','${safeN}','${safeAv}','${p.id}')">💬 发消息</button>`
-      : isMine
-        ? `<button class="post-modal-msg-btn" style="opacity:.45;cursor:default" disabled>我发布的</button>`
-        : `<button class="post-modal-msg-btn" style="opacity:.45;cursor:default" disabled>不接受消息</button>`
+  page.addEventListener('touchmove',e=>{
+    if(!startY)return;
+    const dy=e.touches[0].clientY-startY;
+    if(dy>10&&page.scrollTop===0){
+      pulling=true;
+      triggered=dy>THRESHOLD;
+      txt.textContent=triggered?'松开刷新':'下拉刷新';
+      ind.classList.toggle('visible',dy>20);
     }
-  `;
+  },{passive:true});
 
-  document.getElementById('postModal').classList.add('open');
-};
+  page.addEventListener('touchend',()=>{
+    if(pulling&&triggered){
+      txt.textContent='刷新中…';
+      loadPosts().finally(()=>{
+        ind.classList.remove('visible');
+      });
+    }else{
+      ind.classList.remove('visible');
+    }
+    startY=0;pulling=false;triggered=false;
+  },{passive:true});
+})();
 
-window.closePostModal = function(e) {
-  if (!e || e.target === document.getElementById('postModal')) {
-    document.getElementById('postModal').classList.remove('open');
+// ── 离线检测 ──
+(function(){
+  const banner=document.getElementById('offlineBanner');
+  function update(){
+    banner.classList.toggle('show',!navigator.onLine);
+    if(!navigator.onLine)banner.textContent='📡 网络已断开，请检查你的连接';
+    else{banner.textContent='✅ 网络已恢复';setTimeout(()=>banner.classList.remove('show'),2000);}
   }
-};
+  window.addEventListener('offline',update);
+  window.addEventListener('online',update);
+  if(!navigator.onLine)banner.classList.add('show');
+})();
 
 // ── init ──
 (async()=>{
