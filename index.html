@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>搭子 · 韩团线下</title>
+<title>你也是来看这个的吗</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -188,6 +188,13 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
 .av-emoji-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
 .av-emoji{width:36px;height:36px;border-radius:50%;background:var(--gray-1);border:1.5px solid transparent;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:border-color .15s;}
 .av-emoji.picked{border-color:var(--black);}
+/* date picker tabs */
+.date-tabs{display:flex;gap:6px;margin-bottom:10px;}
+.date-tab{flex:1;text-align:center;padding:7px 0;font-size:12.5px;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--gray-5);cursor:pointer;border:1.5px solid var(--gray-3);border-radius:var(--radius-sm);background:none;transition:all .15s;}
+.date-tab.on{background:var(--black);border-color:var(--black);color:var(--white);font-weight:400;}
+.date-pane{display:none;}.date-pane.show{display:block;}
+.date-range-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;}
+.date-range-sep{font-size:13px;color:var(--gray-5);text-align:center;}
 /* toast */
 .toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--black);color:var(--white);padding:11px 22px;border-radius:999px;font-size:13px;font-family:'Noto Sans SC',sans-serif;font-weight:300;opacity:0;pointer-events:none;transition:all .28s ease;z-index:999;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -313,7 +320,24 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
           </div>
           <div class="form-group">
             <label class="form-label">日期</label>
-            <input class="fi" id="pub-date" type="date">
+            <div class="date-tabs">
+              <button type="button" class="date-tab on" id="pub-dtab-single" onclick="window.pubSwitchDate('single')">单天</button>
+              <button type="button" class="date-tab" id="pub-dtab-range" onclick="window.pubSwitchDate('range')">日期范围</button>
+              <button type="button" class="date-tab" id="pub-dtab-tbd" onclick="window.pubSwitchDate('tbd')">待定</button>
+            </div>
+            <div class="date-pane show" id="pub-dpane-single">
+              <input class="fi" id="pub-date-single" type="date">
+            </div>
+            <div class="date-pane" id="pub-dpane-range">
+              <div class="date-range-row">
+                <input class="fi" id="pub-date-start" type="date" placeholder="开始">
+                <div class="date-range-sep">—</div>
+                <input class="fi" id="pub-date-end" type="date" placeholder="结束">
+              </div>
+            </div>
+            <div class="date-pane" id="pub-dpane-tbd">
+              <div style="padding:10px 13px;border:1.5px solid var(--gray-2);border-radius:var(--radius-sm);font-size:13.5px;color:var(--gray-5);font-weight:300;background:var(--gray-1);">日期待定，发布后可编辑</div>
+            </div>
           </div>
         </div>
         <div class="form-group">
@@ -873,7 +897,7 @@ function renderCards(posts){
   document.getElementById('resultCount').textContent=`共 ${posts.length} 条行程`;
   if(!posts.length){list.innerHTML='<div style="padding:40px 0;text-align:center;color:var(--gray-5);font-size:13px;font-weight:300;">暂无符合条件的行程～</div>';return;}
   list.innerHTML=posts.map(p=>{
-    const ds=p.date?p.date.replace(/-/g,'.'):'';
+    const ds=p.date||'';
     const tags=Array.isArray(p.tags)?p.tags:[];
     const av=p.avatar_url||'🌸';
     const avH=(av.startsWith('http')||av.startsWith('/'))?`<img src="${av}" alt="av">`:av;
@@ -918,7 +942,7 @@ window.submitPost=async function(){
   const{data:prof}=await sb.from('profiles').select('username,avatar_url').eq('id',currentUser.id).single();
   const{error}=await sb.from('posts').insert({
     city,event,about,idol,
-    date:document.getElementById('pub-date').value||null,
+    date:window.getPubDateValue()||null,
     type:tc[0]||null,
     num:document.getElementById('pub-num').value,
     gender:document.getElementById('pub-gender').value,
@@ -933,7 +957,7 @@ window.submitPost=async function(){
   });
   btn.textContent='发布行程';btn.disabled=false;
   if(error){showToast('发布失败：'+(error.message||'请重试'));return;}
-  ['pub-city','pub-date','pub-event','pub-budget','pub-idol','pub-style','pub-about','pub-desc'].forEach(id=>{document.getElementById(id).value='';});
+  ['pub-city','pub-date-single','pub-date-start','pub-date-end','pub-budget','pub-idol','pub-style','pub-about','pub-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.querySelectorAll('#page-publish .ms-chip.sel').forEach(c=>c.classList.remove('sel'));
   document.getElementById('pub-dm').checked=true;
   showToast('发布成功！已上线 ✓');
@@ -951,7 +975,7 @@ async function renderMyPosts(){
     <div class="my-post">
       <div style="flex:1;min-width:0">
         <div class="my-post-title">${p.event||'未命名活动'}</div>
-        <div class="my-post-meta">${p.date?p.date.replace(/-/g,'.'):''}${p.city?' · '+p.city:''} · 招募 ${p.num||'–'}</div>
+        <div class="my-post-meta">${p.date||''}${p.city?' · '+p.city:''} · 招募 ${p.num||'–'}</div>
         ${p.idol?`<div style="margin-top:5px;font-size:11.5px;color:var(--gray-5)">本命：${p.idol}</div>`:''}
       </div>
       <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0">
@@ -991,7 +1015,27 @@ window.openEditPostModal=function(idx){
   document.getElementById('editPostBody').innerHTML=`
     <input type="hidden" id="epId" value="${p.id}">
     <div class="form-group"><label class="form-label">地区 <span class="req">*</span></label><input class="fi" id="epCity" value="${p.city||''}"></div>
-    <div class="form-group"><label class="form-label">日期</label><input class="fi" id="epDate" type="date" value="${p.date||''}"></div>
+    <div class="form-group">
+      <label class="form-label">日期</label>
+      <div class="date-tabs">
+        <button type="button" class="date-tab ${!p.date||(!p.date.includes('–')&&p.date!=='待定')?'on':''}" id="ep-dtab-single" onclick="window.epSwitchDate('single')">单天</button>
+        <button type="button" class="date-tab ${p.date&&p.date.includes('–')?'on':''}" id="ep-dtab-range" onclick="window.epSwitchDate('range')">日期范围</button>
+        <button type="button" class="date-tab ${p.date==='待定'?'on':''}" id="ep-dtab-tbd" onclick="window.epSwitchDate('tbd')">待定</button>
+      </div>
+      <div class="date-pane ${!p.date||(!p.date.includes('–')&&p.date!=='待定')?'show':''}" id="ep-dpane-single">
+        <input class="fi" id="epDateSingle" type="date" value="${(p.date&&!p.date.includes('–')&&p.date!=='待定')?p.date.replace(/\./g,'-'):''}">
+      </div>
+      <div class="date-pane ${p.date&&p.date.includes('–')?'show':''}" id="ep-dpane-range">
+        <div class="date-range-row">
+          <input class="fi" id="epDateStart" type="date" value="${p.date&&p.date.includes('–')?p.date.split('–')[0].trim().replace(/\./g,'-'):''}">
+          <div class="date-range-sep">—</div>
+          <input class="fi" id="epDateEnd" type="date" value="${p.date&&p.date.includes('–')?p.date.split('–')[1].trim().replace(/\./g,'-'):''}">
+        </div>
+      </div>
+      <div class="date-pane ${p.date==='待定'?'show':''}" id="ep-dpane-tbd">
+        <div style="padding:10px 13px;border:1.5px solid var(--gray-2);border-radius:var(--radius-sm);font-size:13.5px;color:var(--gray-5);font-weight:300;background:var(--gray-1);">日期待定</div>
+      </div>
+    </div>
     <div class="form-group"><label class="form-label">活动名称 <span class="req">*</span></label><input class="fi" id="epEvent" value="${p.event||''}"></div>
     <div class="form-group"><label class="form-label">活动类型</label>
       <div class="ms-wrap" id="epTypeChips">${typeOpts.map(t=>`<span class="ms-chip${p.type===t?' sel':''}" onclick="window.epToggleType(this)">${t}</span>`).join('')}</div>
@@ -1043,7 +1087,7 @@ window.saveEditPost=async function(){
   const tags=[...document.querySelectorAll('#epTripTags .ms-chip.sel')].map(c=>c.textContent.trim());
   const{error}=await sb.from('posts').update({
     city,event,about,idol,
-    date:document.getElementById('epDate').value||null,
+    date:window.getEpDateValue()||null,
     type:typeEl?typeEl.textContent.trim():null,
     num:document.getElementById('epNum').value,
     gender:document.getElementById('epGender').value,
@@ -1067,6 +1111,60 @@ sb.auth.onAuthStateChange(async(_,session)=>{
   if(currentUser&&document.getElementById('page-my').classList.contains('active')){await loadProfile();renderMyPosts();}
   if(currentUser&&document.getElementById('page-dm').classList.contains('active'))renderConvList();
 });
+
+// ── 日期选择器辅助 ──
+// 格式化 date input 值为展示字符串
+function fmtDate(v){return v?v.replace(/-/g,'.'):''}
+
+// 发布页：切换日期模式
+window.pubSwitchDate=function(mode){
+  ['single','range','tbd'].forEach(m=>{
+    document.getElementById('pub-dtab-'+m).classList.toggle('on',m===mode);
+    document.getElementById('pub-dpane-'+m).classList.toggle('show',m===mode);
+  });
+};
+// 发布页：读取当前日期值
+window.getPubDateValue=function(){
+  const active=['single','range','tbd'].find(m=>document.getElementById('pub-dtab-'+m).classList.contains('on'));
+  if(active==='single'){
+    const v=document.getElementById('pub-date-single').value;
+    return v?fmtDate(v):null;
+  }
+  if(active==='range'){
+    const s=document.getElementById('pub-date-start').value;
+    const e=document.getElementById('pub-date-end').value;
+    if(s&&e)return`${fmtDate(s)}–${fmtDate(e)}`;
+    if(s)return fmtDate(s);
+    return null;
+  }
+  if(active==='tbd')return'待定';
+  return null;
+};
+
+// 编辑帖子弹窗：切换日期模式
+window.epSwitchDate=function(mode){
+  ['single','range','tbd'].forEach(m=>{
+    document.getElementById('ep-dtab-'+m).classList.toggle('on',m===mode);
+    document.getElementById('ep-dpane-'+m).classList.toggle('show',m===mode);
+  });
+};
+// 编辑帖子弹窗：读取当前日期值
+window.getEpDateValue=function(){
+  const active=['single','range','tbd'].find(m=>document.getElementById('ep-dtab-'+m)?.classList.contains('on'));
+  if(active==='single'){
+    const v=document.getElementById('epDateSingle')?.value;
+    return v?fmtDate(v):null;
+  }
+  if(active==='range'){
+    const s=document.getElementById('epDateStart')?.value;
+    const e=document.getElementById('epDateEnd')?.value;
+    if(s&&e)return`${fmtDate(s)}–${fmtDate(e)}`;
+    if(s)return fmtDate(s);
+    return null;
+  }
+  if(active==='tbd')return'待定';
+  return null;
+};
 
 // ── 返回顶部 ──
 window.scrollDiscoverToTop=function(){
