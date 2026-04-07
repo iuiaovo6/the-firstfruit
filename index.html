@@ -495,8 +495,8 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
     <!-- ⑤ 测缘 -->
     <div class="page" id="page-bazi">
       <div class="bazi-intro">
-        <div class="bazi-intro-title">频率纠缠 ✨</div>
-        <div class="bazi-intro-sub">输入两人生辰，用《子平八字》测算你们的搭子缘分～结果仅供娱乐参考 🔮</div>
+        <div class="bazi-intro-title">频率纠错 ✨</div>
+        <div class="bazi-intro-sub">输入两人生辰，用《子平八字》测算你们的搭子缘分～结果仅供娱乐参考，重在好玩 🔮</div>
 
         <div class="bazi-person">
           <div class="bazi-person-label">A · 我的生辰</div>
@@ -1358,10 +1358,24 @@ B 的生辰：${bInfo}
     const data = await resp.json();
     const raw = (data.content||[]).map(b=>b.text||'').join('');
 
-    // extract JSON
-    const jsonMatch = raw.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('格式解析失败');
-    const r = JSON.parse(jsonMatch[0]);
+    // 兼容 DeepSeek 返回 ```json ... ``` 格式
+    let jsonStr = raw;
+    // 去掉 markdown 代码块包裹
+    const mdMatch = raw.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (mdMatch) jsonStr = mdMatch[1].trim();
+    // 提取第一个完整 JSON 对象
+    const jsonMatch = jsonStr.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      console.error('原始返回内容：', raw);
+      throw new Error('格式解析失败，原始内容：' + raw.slice(0, 200));
+    }
+    let r;
+    try {
+      r = JSON.parse(jsonMatch[0]);
+    } catch(parseErr) {
+      console.error('JSON解析出错：', jsonMatch[0]);
+      throw new Error('JSON解析出错：' + parseErr.message);
+    }
 
     loading.style.display = 'none';
 
@@ -1409,7 +1423,7 @@ B 的生辰：${bInfo}
 
   } catch(e) {
     loading.style.display = 'none';
-    content.innerHTML = `<div style="padding:20px 0;text-align:center;color:var(--gray-5);font-size:13px;font-weight:300;">测算出错了，请稍后重试 🙏<br><span style="font-size:11px;color:var(--gray-3);margin-top:6px;display:block">${e.message||''}</span></div>`;
+    content.innerHTML = `<div style="padding:20px 0;text-align:center;color:var(--gray-5);font-size:13px;font-weight:300;">测算出错了，请稍后重试 🙏<br><span style="font-size:11px;color:var(--gray-3);margin-top:6px;display:block;word-break:break-all;text-align:left;padding:0 8px">${(e.message||'').slice(0,300)}</span></div>`;
     resetBtn.style.display = 'block';
   }
 
