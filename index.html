@@ -195,6 +195,36 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
 .date-pane{display:none;}.date-pane.show{display:block;}
 .date-range-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;}
 .date-range-sep{font-size:13px;color:var(--gray-5);text-align:center;}
+/* ── 八字测缘页 ── */
+.bazi-intro{padding:20px 22px 0;}
+.bazi-intro-title{font-size:23px;font-weight:500;letter-spacing:-.5px;margin-bottom:4px;}
+.bazi-intro-sub{font-size:13px;color:var(--gray-5);font-weight:300;line-height:1.65;margin-bottom:24px;}
+.bazi-person{background:var(--gray-1);border-radius:var(--radius);padding:16px;margin-bottom:14px;}
+.bazi-person-label{font-size:11.5px;font-weight:500;color:var(--gray-5);letter-spacing:.4px;text-transform:uppercase;margin-bottom:12px;}
+.bazi-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.bazi-field label{display:block;font-size:11px;color:var(--gray-5);margin-bottom:5px;}
+.bazi-field input,.bazi-field select{width:100%;border:1.5px solid var(--gray-3);border-radius:var(--radius-sm);padding:9px 11px;font-size:13px;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--black);background:var(--white);appearance:none;outline:none;transition:border-color .2s;}
+.bazi-field input:focus,.bazi-field select:focus{border-color:var(--black);}
+.bazi-field-full{grid-column:1/-1;}
+.bazi-calc-btn{width:100%;padding:14px;background:var(--black);color:var(--white);border:none;border-radius:var(--radius);font-size:15px;font-family:'Noto Sans SC',sans-serif;font-weight:400;letter-spacing:.5px;cursor:pointer;margin-top:6px;transition:opacity .2s;}
+.bazi-calc-btn:hover{opacity:.78;}
+.bazi-calc-btn:disabled{opacity:.4;cursor:not-allowed;}
+.bazi-disclaimer{font-size:11.5px;color:var(--gray-5);font-weight:300;text-align:center;margin-top:12px;line-height:1.6;}
+/* result area */
+.bazi-result{padding:0 22px;margin-top:20px;display:none;}
+.bazi-result.show{display:block;}
+.bazi-score-card{background:var(--black);color:var(--white);border-radius:var(--radius);padding:22px;text-align:center;margin-bottom:18px;}
+.bazi-score-num{font-family:'DM Sans',sans-serif;font-size:52px;font-weight:500;line-height:1;letter-spacing:-2px;margin-bottom:6px;}
+.bazi-score-label{font-size:13px;opacity:.6;font-weight:300;letter-spacing:.5px;}
+.bazi-score-verdict{font-size:16px;font-weight:400;margin-top:10px;opacity:.9;}
+.bazi-section{margin-bottom:18px;}
+.bazi-section-title{font-size:12px;font-weight:500;color:var(--gray-5);letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px;}
+.bazi-section-body{font-size:14px;color:var(--gray-7);line-height:1.8;font-weight:300;white-space:pre-wrap;word-break:break-word;}
+.bazi-divider{height:1px;background:var(--gray-1);margin:16px 0;}
+.bazi-loading{padding:40px 0;text-align:center;color:var(--gray-5);font-size:13px;font-weight:300;}
+.bazi-loading-spinner{width:24px;height:24px;border:2px solid var(--gray-3);border-top-color:var(--black);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+.bazi-reset-btn{width:100%;padding:12px;border:1.5px solid var(--gray-3);border-radius:var(--radius);font-size:14px;font-family:'Noto Sans SC',sans-serif;font-weight:300;color:var(--gray-7);background:none;cursor:pointer;margin-top:4px;margin-bottom:24px;transition:all .2s;}
+.bazi-reset-btn:hover{border-color:var(--black);color:var(--black);}
 /* toast */
 .toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--black);color:var(--white);padding:11px 22px;border-radius:999px;font-size:13px;font-family:'Noto Sans SC',sans-serif;font-weight:300;opacity:0;pointer-events:none;transition:all .28s ease;z-index:999;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -462,11 +492,99 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
       </div>
     </div>
 
+    <!-- ⑤ 测缘 -->
+    <div class="page" id="page-bazi">
+      <div class="bazi-intro">
+        <div class="bazi-intro-title">八字测缘 ✨</div>
+        <div class="bazi-intro-sub">输入两人生辰，用《子平八字》测算你们的搭子缘分～结果仅供娱乐参考，重在好玩 🔮</div>
+
+        <div class="bazi-person">
+          <div class="bazi-person-label">A · 我的生辰</div>
+          <div class="bazi-fields">
+            <div class="bazi-field">
+              <label>出生年</label>
+              <input type="number" id="bz-a-year" placeholder="如 1999" min="1900" max="2010">
+            </div>
+            <div class="bazi-field">
+              <label>出生月</label>
+              <select id="bz-a-month">
+                <option value="">月</option>
+                <option>1月</option><option>2月</option><option>3月</option><option>4月</option>
+                <option>5月</option><option>6月</option><option>7月</option><option>8月</option>
+                <option>9月</option><option>10月</option><option>11月</option><option>12月</option>
+              </select>
+            </div>
+            <div class="bazi-field">
+              <label>出生日</label>
+              <input type="number" id="bz-a-day" placeholder="如 15" min="1" max="31">
+            </div>
+            <div class="bazi-field">
+              <label>出生时辰（可选）</label>
+              <select id="bz-a-hour">
+                <option value="">不填</option>
+                <option>子时 23–01</option><option>丑时 01–03</option><option>寅时 03–05</option>
+                <option>卯时 05–07</option><option>辰时 07–09</option><option>巳时 09–11</option>
+                <option>午时 11–13</option><option>未时 13–15</option><option>申时 15–17</option>
+                <option>酉时 17–19</option><option>戌时 19–21</option><option>亥时 21–23</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="bazi-person">
+          <div class="bazi-person-label">B · 搭子的生辰</div>
+          <div class="bazi-fields">
+            <div class="bazi-field">
+              <label>出生年</label>
+              <input type="number" id="bz-b-year" placeholder="如 2001" min="1900" max="2010">
+            </div>
+            <div class="bazi-field">
+              <label>出生月</label>
+              <select id="bz-b-month">
+                <option value="">月</option>
+                <option>1月</option><option>2月</option><option>3月</option><option>4月</option>
+                <option>5月</option><option>6月</option><option>7月</option><option>8月</option>
+                <option>9月</option><option>10月</option><option>11月</option><option>12月</option>
+              </select>
+            </div>
+            <div class="bazi-field">
+              <label>出生日</label>
+              <input type="number" id="bz-b-day" placeholder="如 28" min="1" max="31">
+            </div>
+            <div class="bazi-field">
+              <label>出生时辰（可选）</label>
+              <select id="bz-b-hour">
+                <option value="">不填</option>
+                <option>子时 23–01</option><option>丑时 01–03</option><option>寅时 03–05</option>
+                <option>卯时 05–07</option><option>辰时 07–09</option><option>巳时 09–11</option>
+                <option>午时 11–13</option><option>未时 13–15</option><option>申时 15–17</option>
+                <option>酉时 17–19</option><option>戌时 19–21</option><option>亥时 21–23</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button class="bazi-calc-btn" id="baziCalcBtn" onclick="window.calcBazi()">开始测算 🔮</button>
+        <div class="bazi-disclaimer">本功能由 AI 辅助测算，基于传统八字理论生成，结果仅供娱乐，请勿作为实际决策依据。</div>
+      </div>
+
+      <!-- 结果区 -->
+      <div class="bazi-result" id="baziResult">
+        <div class="bazi-loading" id="baziLoading" style="display:none">
+          <div class="bazi-loading-spinner"></div>
+          正在推算干支五行，稍等片刻…
+        </div>
+        <div id="baziResultContent"></div>
+        <button class="bazi-reset-btn" id="baziResetBtn" onclick="window.resetBazi()" style="display:none">重新测算</button>
+      </div>
+    </div>
+
   </div>
   <nav class="bottom-nav">
     <button class="nav-item active" onclick="window.switchPage('discover',this)"><span class="ni">🔍</span>发现</button>
     <button class="nav-item" onclick="window.switchPage('publish',this)"><span class="ni">＋</span>发布</button>
     <button class="nav-item" id="navDm" onclick="window.switchPage('dm',this)"><span class="ni">💬</span>消息<span class="nav-badge" id="dmBadge"></span></button>
+    <button class="nav-item" onclick="window.switchPage('bazi',this)"><span class="ni">✨</span>测缘</button>
     <button class="nav-item" onclick="window.switchPage('my',this)"><span class="ni">👤</span>我的</button>
   </nav>
 </div>
@@ -564,7 +682,7 @@ window.switchPage=function(id,btn){
   if(id==='publish')renderPublishPage();
   if(id==='dm'){renderConvList();document.getElementById('dmBadge').classList.remove('show');}
 };
-window.goToLogin=function(){window.switchPage('my',document.querySelector('.nav-item:nth-child(4)'));};
+window.goToLogin=function(){window.switchPage('my',document.querySelector('.nav-item:nth-child(5)'));};
 
 // ── auth state ──
 function renderAuthState(){
@@ -961,7 +1079,7 @@ window.submitPost=async function(){
   document.querySelectorAll('#page-publish .ms-chip.sel').forEach(c=>c.classList.remove('sel'));
   document.getElementById('pub-dm').checked=true;
   showToast('发布成功！已上线 ✓');
-  window.switchPage('my',document.querySelector('.nav-item:nth-child(4)'));
+  window.switchPage('my',document.querySelector('.nav-item:nth-child(5)'));
 };
 
 // ── 我的发布 ──
@@ -1164,6 +1282,146 @@ window.getEpDateValue=function(){
   }
   if(active==='tbd')return'待定';
   return null;
+};
+
+// ══ 八字测缘 ══
+window.calcBazi = async function() {
+  const aYear  = document.getElementById('bz-a-year').value.trim();
+  const aMonth = document.getElementById('bz-a-month').value;
+  const aDay   = document.getElementById('bz-a-day').value.trim();
+  const aHour  = document.getElementById('bz-a-hour').value;
+  const bYear  = document.getElementById('bz-b-year').value.trim();
+  const bMonth = document.getElementById('bz-b-month').value;
+  const bDay   = document.getElementById('bz-b-day').value.trim();
+  const bHour  = document.getElementById('bz-b-hour').value;
+
+  if (!aYear||!aMonth||!aDay||!bYear||!bMonth||!bDay) {
+    showToast('请至少填写两人的年月日 ✦'); return;
+  }
+
+  const btn = document.getElementById('baziCalcBtn');
+  btn.disabled = true; btn.textContent = '推算中…';
+
+  const result = document.getElementById('baziResult');
+  const loading = document.getElementById('baziLoading');
+  const content = document.getElementById('baziResultContent');
+  const resetBtn = document.getElementById('baziResetBtn');
+
+  result.classList.add('show');
+  loading.style.display = 'block';
+  content.innerHTML = '';
+  resetBtn.style.display = 'none';
+
+  // scroll to result
+  setTimeout(() => result.scrollIntoView({behavior:'smooth', block:'start'}), 100);
+
+  const aInfo = `${aYear}年${aMonth}${aDay}日${aHour ? ' ' + aHour : '（时辰未知）'}`;
+  const bInfo = `${bYear}年${bMonth}${bDay}日${bHour ? ' ' + bHour : '（时辰未知）'}`;
+
+  const prompt = `你是一位精通传统《子平八字》与《易经》测算的命理专家，尤其擅长分析人际关系的"气场契合度"。
+
+请根据以下两人的生辰信息进行深度合盘，判断两人作为"线下看演唱会搭子"的缘分：
+
+A 的生辰：${aInfo}
+B 的生辰：${bInfo}
+
+要求（必须严格遵守）：
+1. 必须基于干支历法推导五行，先列出两人各自的年柱、月柱、日柱（时柱如已知则列出），再分析五行多寡
+2. 分析维度：五行互补、天干地支六合三合与六冲关系、十神性格契合
+3. 合理使用"格局"、"通关"、"燥湿平衡"、"月令"等术语
+4. 结合追星/看演出场景，具体说明各自适合承担的角色（如：谁负责查攻略、谁负责现场冲锋）
+5. 语气客观睿智，略带禅意但不晦涩
+
+请严格按以下 JSON 格式输出，不要有任何其他文字：
+{
+  "score": <0-100的整数>,
+  "verdict": "<10字以内的总结，如：天作之合 / 互补相生 / 平淡和睦>",
+  "wuxing": "<五行气场分析，150字以内>",
+  "ganzhi": "<天干地支关系分析，100字以内>",
+  "xingshen": "<十神性格契合分析，100字以内>",
+  "roles": "<演唱会搭子角色建议，A和B各一句，共100字以内>",
+  "advice": "<线下相处建议，100字以内>"
+}`;
+
+  try {
+    const resp = await fetch('https://exctfpjjkszzrgckovjl.supabase.co/functions/v1/claude-proxy', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': 'sb_publishable_Gs-xsv-eW8LofSV24bpzcA_SZnBgEJR',
+      },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 1000,
+      })
+    });
+    const data = await resp.json();
+    const raw = (data.content||[]).map(b=>b.text||'').join('');
+
+    // extract JSON
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('格式解析失败');
+    const r = JSON.parse(jsonMatch[0]);
+
+    loading.style.display = 'none';
+
+    // score color
+    const scoreColor = r.score >= 80 ? '#c9a227' : r.score >= 60 ? '#1D9E75' : '#888';
+
+    content.innerHTML = `
+      <div class="bazi-score-card" style="background:${scoreColor === '#c9a227' ? 'linear-gradient(135deg,#1a1a1a,#2a2200)' : 'var(--black)'}">
+        <div class="bazi-score-num">${r.score}</div>
+        <div class="bazi-score-label">搭子缘分指数 / 100</div>
+        <div class="bazi-score-verdict">${r.verdict || ''}</div>
+      </div>
+
+      <div class="bazi-section">
+        <div class="bazi-section-title">🔥 五行气场平衡</div>
+        <div class="bazi-section-body">${r.wuxing || ''}</div>
+      </div>
+      <div class="bazi-divider"></div>
+
+      <div class="bazi-section">
+        <div class="bazi-section-title">☯ 天干地支关系</div>
+        <div class="bazi-section-body">${r.ganzhi || ''}</div>
+      </div>
+      <div class="bazi-divider"></div>
+
+      <div class="bazi-section">
+        <div class="bazi-section-title">👁 十神性格契合</div>
+        <div class="bazi-section-body">${r.xingshen || ''}</div>
+      </div>
+      <div class="bazi-divider"></div>
+
+      <div class="bazi-section">
+        <div class="bazi-section-title">🎤 演唱会现场分工</div>
+        <div class="bazi-section-body">${r.roles || ''}</div>
+      </div>
+      <div class="bazi-divider"></div>
+
+      <div class="bazi-section">
+        <div class="bazi-section-title">🤍 线下相处建议</div>
+        <div class="bazi-section-body">${r.advice || ''}</div>
+      </div>
+      <div style="height:4px"></div>
+    `;
+    resetBtn.style.display = 'block';
+
+  } catch(e) {
+    loading.style.display = 'none';
+    content.innerHTML = `<div style="padding:20px 0;text-align:center;color:var(--gray-5);font-size:13px;font-weight:300;">测算出错了，请稍后重试 🙏<br><span style="font-size:11px;color:var(--gray-3);margin-top:6px;display:block">${e.message||''}</span></div>`;
+    resetBtn.style.display = 'block';
+  }
+
+  btn.disabled = false; btn.textContent = '开始测算 🔮';
+};
+
+window.resetBazi = function() {
+  document.getElementById('baziResult').classList.remove('show');
+  document.getElementById('baziResultContent').innerHTML = '';
+  document.getElementById('baziLoading').style.display = 'none';
+  document.getElementById('baziResetBtn').style.display = 'none';
+  document.getElementById('page-bazi').scrollTo({top:0, behavior:'smooth'});
 };
 
 // ── 返回顶部 ──
