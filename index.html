@@ -495,7 +495,7 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
     <!-- ⑤ 测缘 -->
     <div class="page" id="page-bazi">
       <div class="bazi-intro">
-        <div class="bazi-intro-title">频率纠错 ✨</div>
+        <div class="bazi-intro-title">频率纠缠 ✨</div>
         <div class="bazi-intro-sub">输入两人生辰，用《子平八字》测算你们的搭子缘分～结果仅供娱乐参考，重在好玩 🔮</div>
 
         <div class="bazi-person">
@@ -1349,6 +1349,7 @@ B 的生辰：${bInfo}
       headers: {
         'Content-Type': 'application/json',
         'apikey': 'sb_publishable_Gs-xsv-eW8LofSV24bpzcA_SZnBgEJR',
+        'Authorization': 'Bearer sb_publishable_Gs-xsv-eW8LofSV24bpzcA_SZnBgEJR',
       },
       body: JSON.stringify({
         messages: [{ role: 'user', content: prompt }],
