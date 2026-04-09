@@ -101,6 +101,9 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
 .conv-list{display:flex;flex-direction:column;}
 .conv-item{display:flex;align-items:center;gap:13px;padding:14px 22px;border-bottom:1px solid var(--gray-1);cursor:pointer;transition:background .15s;}
 .conv-item:hover{background:var(--gray-1);}
+.conv-unread{min-width:18px;height:18px;border-radius:999px;background:#e44;color:#fff;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;padding:0 5px;flex-shrink:0;}
+.nav-badge-count{position:absolute;top:7px;right:calc(50% - 18px);min-width:16px;height:16px;border-radius:999px;background:#e44;color:#fff;font-size:10px;font-weight:500;font-family:'DM Sans',sans-serif;display:none;align-items:center;justify-content:center;padding:0 4px;}
+.nav-badge-count.show{display:flex;}
 .conv-avatar{width:44px;height:44px;border-radius:50%;background:var(--gray-1);border:1.5px solid var(--gray-3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden;}
 .conv-avatar img{width:100%;height:100%;object-fit:cover;}
 .conv-info{flex:1;min-width:0;}
@@ -607,7 +610,7 @@ html,body{height:100%;background:#ddd;font-family:'Noto Sans SC',sans-serif;font
   <nav class="bottom-nav">
     <button class="nav-item active" onclick="window.switchPage('discover',this)"><span class="ni">🔍</span>发现</button>
     <button class="nav-item" onclick="window.switchPage('publish',this)"><span class="ni">＋</span>发布</button>
-    <button class="nav-item" id="navDm" onclick="window.switchPage('dm',this)"><span class="ni">💬</span>消息<span class="nav-badge" id="dmBadge"></span></button>
+    <button class="nav-item" id="navDm" onclick="window.switchPage('dm',this)"><span class="ni">💬</span>消息<span class="nav-badge-count" id="dmBadge"></span></button>
     <button class="nav-item" onclick="window.switchPage('bazi',this)"><span class="ni">✨</span>测缘</button>
     <button class="nav-item" onclick="window.switchPage('my',this)"><span class="ni">👤</span>我的</button>
   </nav>
@@ -713,7 +716,7 @@ window.switchPage=function(id,btn){
   if(id==='discover')loadPosts();
   if(id==='my')renderMyPage();
   if(id==='publish')renderPublishPage();
-  if(id==='dm'){renderConvList();document.getElementById('dmBadge').classList.remove('show');}
+  if(id==='dm'){renderConvList();updateDmBadge(0);}
 };
 window.goToLogin=function(){window.switchPage('my',document.querySelector('.nav-item:nth-child(5)'));};
 
@@ -874,11 +877,14 @@ function openChatPanel(convId,peerId,peerName,peerAv){
   document.getElementById('chatPanel').classList.add('open');
   loadMessages(convId);
   subMessages(convId);
+  // 打开聊天时清零我的未读数
+  clearMyUnread(convId);
 }
 
 window.closeChat=function(){
   document.getElementById('chatPanel').classList.remove('open');
   if(msgSub){msgSub.unsubscribe();msgSub=null;}
+  if(activeChatConvId)clearMyUnread(activeChatConvId);
   activeChatConvId=null;activeChatPeerId=null;
   renderConvList();
 };
@@ -962,8 +968,38 @@ window.sendMessage=async function(){
   input.value='';input.style.height='auto';
   const{error}=await sb.from('messages').insert({conversation_id:activeChatConvId,sender_id:currentUser.id,content:text});
   if(error){showToast('发送失败');return;}
-  await sb.from('conversations').update({last_message:text,last_at:new Date().toISOString()}).eq('id',activeChatConvId);
+  // 获取会话信息，判断对方是 user_a 还是 user_b，给对方的未读+1
+  const{data:conv}=await sb.from('conversations').select('user_a,user_b,unread_a,unread_b').eq('id',activeChatConvId).single();
+  if(conv){
+    const peerIsA=conv.user_b===currentUser.id; // 我是 user_b，对方是 user_a
+    const updateField=peerIsA?{unread_a:(conv.unread_a||0)+1}:{unread_b:(conv.unread_b||0)+1};
+    await sb.from('conversations').update({
+      last_message:text,
+      last_at:new Date().toISOString(),
+      ...updateField
+    }).eq('id',activeChatConvId);
+  }
 };
+
+// ── 未读数工具函数 ──
+function updateDmBadge(count){
+  const el=document.getElementById('dmBadge');
+  if(count>0){
+    el.textContent=count>99?'99+':count;
+    el.classList.add('show');
+  }else{
+    el.textContent='';
+    el.classList.remove('show');
+  }
+}
+
+async function clearMyUnread(convId){
+  if(!currentUser||!convId)return;
+  const{data:conv}=await sb.from('conversations').select('user_a,user_b').eq('id',convId).single();
+  if(!conv)return;
+  const clearField=conv.user_a===currentUser.id?{unread_a:0}:{unread_b:0};
+  await sb.from('conversations').update(clearField).eq('id',convId);
+}
 
 async function renderConvList(){
   const container=document.getElementById('convList');
@@ -975,11 +1011,15 @@ async function renderConvList(){
   const{data:convs,error}=await sb.from('conversations').select('*').or(`user_a.eq.${currentUser.id},user_b.eq.${currentUser.id}`).order('last_at',{ascending:false});
   if(error||!convs?.length){
     container.innerHTML=`<div class="dm-empty"><div class="big">💬</div><h3>还没有消息</h3><p>在发现页找到感兴趣的行程<br>点「消息」开始聊天吧 🤍</p></div>`;
+    updateDmBadge(0);
     return;
   }
   const peerIds=convs.map(c=>c.user_a===currentUser.id?c.user_b:c.user_a);
   const{data:profs}=await sb.from('profiles').select('id,username,avatar_url').in('id',peerIds);
   const pm=Object.fromEntries((profs||[]).map(p=>[p.id,p]));
+
+  // 计算总未读数
+  let totalUnread=0;
   container.innerHTML=convs.map(c=>{
     const pid=c.user_a===currentUser.id?c.user_b:c.user_a;
     const peer=pm[pid]||{};
@@ -987,12 +1027,26 @@ async function renderConvList(){
     const pav=peer.avatar_url||'🌸';
     const avH=(pav.startsWith('http')||pav.startsWith('/'))?`<img src="${pav}" alt="av">`:pav;
     const tstr=c.last_at?new Date(c.last_at).toLocaleDateString('zh-CN',{month:'numeric',day:'numeric'}):'';
+    // 我的未读数：我是 user_a 看 unread_a，我是 user_b 看 unread_b
+    const myUnread=c.user_a===currentUser.id?(c.unread_a||0):(c.unread_b||0);
+    totalUnread+=myUnread;
+    const unreadBadge=myUnread>0?`<div class="conv-unread">${myUnread>99?'99+':myUnread}</div>`:'';
     return`<div class="conv-item" onclick="window.openChatById('${c.id}','${pid}','${pname}','${pav}')">
       <div class="conv-avatar">${avH}</div>
-      <div class="conv-info"><div class="conv-name">${pname}</div><div class="conv-preview">${c.last_message||'开始聊天吧…'}</div></div>
-      <div class="conv-time">${tstr}</div>
+      <div class="conv-info">
+        <div class="conv-name" style="${myUnread>0?'font-weight:500;color:var(--black)':''}">${pname}</div>
+        <div class="conv-preview" style="${myUnread>0?'color:var(--gray-7);font-weight:400':''}">
+          ${c.last_message||'开始聊天吧…'}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+        <div class="conv-time">${tstr}</div>
+        ${unreadBadge}
+      </div>
     </div>`;
   }).join('');
+
+  updateDmBadge(totalUnread);
   subConvs();
 }
 
@@ -1002,10 +1056,8 @@ function subConvs(){
   if(convSub)convSub.unsubscribe();
   convSub=sb.channel('convs-'+currentUser.id)
     .on('postgres_changes',{event:'UPDATE',schema:'public',table:'conversations'},()=>{
-      if(!document.getElementById('chatPanel').classList.contains('open')){
-        renderConvList();
-        document.getElementById('dmBadge').classList.add('show');
-      }
+      // 不管聊天面板是否打开都刷新列表（打开时也要更新未读数）
+      renderConvList();
     }).subscribe();
 }
 
@@ -1602,6 +1654,18 @@ window.scrollDiscoverToTop=function(){
   currentUser=session?.user||null;
   renderAuthState();renderPublishPage();
   loadPosts();
+  // 登录后立即拉取总未读数，显示在导航红点
+  if(currentUser){
+    const{data:convs}=await sb.from('conversations').select('user_a,user_b,unread_a,unread_b')
+      .or(`user_a.eq.${currentUser.id},user_b.eq.${currentUser.id}`);
+    if(convs){
+      const total=convs.reduce((sum,c)=>{
+        return sum+(c.user_a===currentUser.id?(c.unread_a||0):(c.unread_b||0));
+      },0);
+      updateDmBadge(total);
+      subConvs(); // 启动实时监听
+    }
+  }
 })();
 </script>
 </body>
